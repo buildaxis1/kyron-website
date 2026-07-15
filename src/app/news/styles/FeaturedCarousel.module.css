@@ -1,0 +1,61 @@
+.viewport {
+  --duration: 30s;
+  --gap: 56px;
+}
+
+.track {
+  display: flex;
+  width: max-content;
+  align-items: center;
+  gap: var(--gap);
+  animation: marquee var(--duration) linear infinite;
+}
+
+.pauseOnHover:hover {
+  animation-play-state: paused;
+}
+
+/* One sequence (we duplicate it for looping) */
+.sequence {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap);
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+}
+
+.fadeLeft,
+.fadeRight {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 96px;
+  pointer-events: none;
+  z-index: 10;
+  background-image: linear-gradient(to right, var(--tw-gradient-from), transparent);
+}
+
+.fadeLeft {
+  left: 0;
+}
+
+.fadeRight {
+  right: 0;
+  transform: scaleX(-1);
+}
+
+/* Smooth infinite loop – moves by half the track (one sequence width) */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(-50% - var(--gap) / 2));
+  }
+}

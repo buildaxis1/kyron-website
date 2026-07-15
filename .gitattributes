@@ -1,0 +1,10 @@
+appspec.yml merge=ours
+Dockerfile merge=ours
+docker-compose.yml merge=ours
+/.github/workflows/zap-production.yml merge=ours
+/.github/workflows/deploy.yml merge=ours
+next.config.js merge=ours
+/trpc/client.tsx merge=ours
+/scripts/start_container.sh merge=ours
+/scripts/stop_container.sh merge=ours
+/scripts/validate.sh merge=ours

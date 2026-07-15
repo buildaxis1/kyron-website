@@ -1,0 +1,51 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.vscode
+
+# misc
+.live_port
+
+# package node_modules
+/packages/shared-utils/node_modules
+/packages/trpc-router/node_modules
+
+/amplify/functions/trpc/node_modules
+/amplify/functions/check-db/node_modules
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# local env files (never commit real secrets — keep only .env.example)
+.env
+.env.*
+!.env.example
+
+# vercel
+.vercel
+
+
+# amplify
+.amplify
+amplify_outputs*
+amplifyconfiguration*

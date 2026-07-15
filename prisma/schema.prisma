@@ -1,0 +1,749 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "windows", "linux-musl", "rhel-openssl-1.0.x", "debian-openssl-1.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+/**
+ * ================================================================================
+ * Clerk Password Management Schema
+ * ================================================================================
+ */
+model User {
+  id              String            @id @default(uuid())
+  clerkId         String            @unique
+  lastActivityAt  DateTime?
+  lastPasswordAt  DateTime?
+  isDeactivated   Boolean           @default(false)
+  deactivatedAt   DateTime?
+  passwordHistories PasswordHistory[]
+}
+
+model PasswordHistory {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  hash      String
+  changedAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model BlogPost {
+  id        String   @id @default(cuid())
+  title     String
+  author    String
+  tagline   String
+  content   String
+  mainImage String
+  imageUrls String[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+/**
+ * ================================================================================
+ * Medical Billing Schema
+ * ================================================================================
+ */
+
+model Patient {
+  id        String @id @default(cuid())
+  patientId String @default("missing_patient_id") // default to a sentinel value
+
+  firstName     String  @default("patient_name")
+  firstName_iv  String? // now nullable (defaults to NULL)
+  firstName_tag String? // likewise
+
+  middleName     String? // nullable
+  middleName_iv  String? // now nullable (defaults to NULL)
+  middleName_tag String? // likewise
+
+  lastName     String  @default("patient_name")
+  lastName_iv  String? // now nullable (defaults to NULL)
+  lastName_tag String? // likewise
+
+  sex     String? // nullable
+  sex_iv  String? // nullable
+  sex_tag String? // nullable
+
+  dob     String  @default(dbgenerated("'''1900-01-01T00:00:00.000Z'''")) // default to a sentinel value
+  dob_iv  String? // now nullable (defaults to NULL)
+  dob_tag String? // likewise
+
+  address     String? // nullable
+  address_iv  String? // nullable
+  address_tag String? // nullable
+
+  city     String? // already nullable
+  city_iv  String? // now nullable (defaults to NULL)
+  city_tag String? // likewise
+
+  state     String? // already nullable
+  state_iv  String? // now nullable (defaults to NULL)
+  state_tag String? // likewise
+
+  zipCode     String? // already nullable
+  zipCode_iv  String? // already nullable
+  zipCode_tag String? // already nullable
+
+  phone     String? // already nullable
+  phone_iv  String? // now nullable (defaults to NULL)
+  phone_tag String? // likewise
+
+  // Optional MRN snapshot (canonical MRN lives in EhrPatientLink)
+  mrnSystem String?
+  mrnValue  String?
+
+  insurances Insurance[] // relation to multiple Insurance records
+
+  encounters Encounter[]
+  patientLinks EhrPatientLink[]
+  documents Document[]
+
+  /**
+   * // Patient notes
+   * const dosStart = row.data.Date_of_Service_Start
+   * ? new Date(row.data.Date_of_Service_Start).toISOString().split("T")[0]
+   * : null;
+   * const dosEnd = row.data.Date_of_Service_End
+   * ? new Date(row.data.Date_of_Service_End).toISOString().split("T")[0]
+   * : null;
+   */
+
+  organizationId String?
+  version        Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([mrnSystem, mrnValue])
+}
+
+model Insurance {
+  id                String  @id @default(cuid())
+  insuranceName     String? @default("missing_insurance_name") // default to a sentinel value
+  insuranceName_iv  String? // now nullable (defaults to NULL)
+  insuranceName_tag String? // likewise
+
+  memberId     String? @default("missing_member_id") // default to a sentinel value
+  memberId_iv  String? // now nullable (defaults to NULL)
+  memberId_tag String? // likewise
+
+  insurancePhone     String? @default("missing_insurance_phone") // default to a sentinel value
+  insurancePhone_iv  String? // now nullable (defaults to NULL)
+  insurancePhone_tag String? // likewise
+
+  // Mailing information
+  mailingEmailAddress     String? // already nullable
+  mailingEmailAddress_iv  String? // now nullable (defaults to NULL)
+  mailingEmailAddress_tag String? // likewise
+
+  networkType     String?
+  networkType_iv  String? // now nullable (defaults to NULL)
+  networkType_tag String? // likewise
+
+  insurancePlan     String?
+  insurancePlan_iv  String? // now nullable (defaults to NULL)
+  insurancePlan_tag String? // likewise
+
+  insuranceStartDate DateTime  @default(dbgenerated("'''1900-01-01T00:00:00.000Z'''")) // default to a sentinel value
+  insuranceEndDate   DateTime?
+
+  // Payer information
+  payerCode     String? // already nullable
+  payerCode_iv  String? // now nullable (defaults to NULL)
+  payerCode_tag String? // likewise
+
+  // Group information
+  groupName     String? // already nullable
+  groupName_iv  String? // now nullable (defaults to NULL)
+  groupName_tag String? // likewise
+
+  groupNumber     String? // already nullable
+  groupNumber_iv  String? // now nullable (defaults to NULL)
+  groupNumber_tag String? // likewise
+
+  // Employer information
+  employerName     String? // already nullable
+  employerName_iv  String? // now nullable (defaults to NULL)
+  employerName_tag String? // likewise
+
+  insuranceCardUrl String? // URL to the insurance card file
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  patientId     String?
+  patient       Patient? @relation(fields: [patientId], references: [id])
+  insuranceCard File?    @relation(fields: [insuranceCardUrl], references: [url])
+
+  @@index([patientId])
+}
+
+model Physician {
+  id String @id @default(cuid())
+
+  physicianName     String  @default("missing_physician_name") // default to a sentinel value
+  physicianName_iv  String? // now nullable (defaults to NULL)
+  physicianName_tag String? // likewise
+
+  physicianNPI     String  @default("missing_npi") // default to a sentinel value
+  physicianNPI_iv  String? // now nullable (defaults to NULL)
+  physicianNPI_tag String? // likewise
+
+  physicianOPN     String? // optional, can be null
+  physicianOPN_iv  String? // now nullable (defaults to NULL)
+  physicianOPN_tag String? // likewise
+
+  physicianTIN     String? // already nullable
+  physicianTIN_iv  String? // now nullable (defaults to NULL)
+  physicianTIN_tag String? // likewise
+
+  physicianExternalId     String? // already nullable
+  physicianExternalId_iv  String? // now nullable (defaults to NULL)
+  physicianExternalId_tag String? // likewise
+
+  physicianAddress     String?
+  physicianAddress_iv  String? // now nullable (defaults to NULL)
+  physicianAddress_tag String? // likewise
+
+  physicianCity     String? // already nullable
+  physicianCity_iv  String? // now nullable (defaults to NULL)
+  physicianCity_tag String? // likewise
+
+  physicianState     String? // already nullable
+  physicianState_iv  String? // now nullable (defaults to NULL)
+  physicianState_tag String? // likewise
+
+  physicianZip     String? // already nullable
+  physicianZip_iv  String? // now nullable (defaults to NULL)
+  physicianZip_tag String? // likewise
+
+  physicianPhone     String?
+  physicianPhone_iv  String? // now nullable (defaults to NULL)
+  physicianPhone_tag String? // likewise
+
+  physicianFax     String?
+  physicianFax_iv  String? // now nullable (defaults to NULL)
+  physicianFax_tag String? // likewise
+
+  physicianEmail     String?
+  physicianEmail_iv  String? // now nullable (defaults to NULL)
+  physicianEmail_tag String? // likewise
+
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Add a relation to the encounter model
+  encounters Encounter[]
+}
+
+model Facility {
+  id       String  @id @default(cuid())
+  name     String
+  name_iv  String? // now nullable (defaults to NULL)
+  name_tag String? // likewise
+
+  facilityNPI     String  @default("missing_npi") // default to a sentinel value
+  facilityNPI_iv  String? // now nullable (defaults to NULL)
+  facilityNPI_tag String? // likewise
+
+  facilityCode     String? // optional, can be null
+  facilityCode_iv  String? // now nullable (defaults to NULL)
+  facilityCode_tag String? // likewise
+
+  address     String  @default("missing_address") // default to a sentinel value
+  address_iv  String? // now nullable (defaults to NULL)
+  address_tag String? // likewise
+
+  city     String  @default("missing_city") // default to a sentinel value
+  city_iv  String? // now nullable (defaults to NULL)
+  city_tag String? // likewise
+
+  state     String  @default("missing_state") // default to a sentinel value
+  state_iv  String? // now nullable (defaults to NULL)
+  state_tag String? // likewise
+
+  zipCode     String  @default("missing_zip") // default to a sentinel value
+  zipCode_iv  String? // now nullable (defaults to NULL)
+  zipCode_tag String? // likewise
+
+  facilityPhone     String? // already present
+  facilityPhone_iv  String? // now nullable (defaults to NULL)
+  facilityPhone_tag String? // likewise
+
+  facilityFax     String? // already present
+  facilityFax_iv  String? // now nullable (defaults to NULL)
+  facilityFax_tag String? // likewise
+
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  encounters Encounter[]
+  locationLinks EhrLocationLink[]
+}
+
+enum EncounterType {
+  ELIGIBILITY_AND_BENEFITS
+  CLAIM_STATUS_INQUIRIES
+  DENIAL_APPEALS
+  PRIOR_AUTHORIZATION
+}
+
+model Encounter {
+  id String @id @default(cuid())
+
+  transactionId String? // optional, can be null
+
+  appointmentType     String  @default("Select")
+  appointmentType_iv  String? // now nullable (defaults to NULL)
+  appointmentType_tag String? // likewise
+
+  appointmentTypeCode     String  @default("")
+  appointmentTypeCode_iv  String? // now nullable (defaults to NULL)
+  appointmentTypeCode_tag String? // likewise
+
+  patientClass     String  @default("Select")
+  patientClass_iv  String? // now nullable (defaults to NULL)
+  patientClass_tag String? // likewise
+
+  dateOfServiceStart     String
+  dateOfServiceStart_iv  String? // now nullable (defaults to NULL)
+  dateOfServiceStart_tag String? // likewise
+
+  dateOfServiceEnd     String?
+  dateOfServiceEnd_iv  String? // now nullable (defaults to NULL)
+  dateOfServiceEnd_tag String? // likewise
+
+  cptCodes     String[] @default([]) // array of strings for multiple CPT codes
+  cptCodes_iv  String[] @default([]) // array of strings for multiple CPT codes (encrypted)
+  cptCodes_tag String[] @default([]) // array of strings for multiple CPT codes (tagged)
+
+  cptDescriptions     String[] @default([]) // array of strings for multiple CPT descriptions
+  cptDescriptions_iv  String[] @default([]) // array of strings for multiple CPT descriptions (encrypted)
+  cptDescriptions_tag String[] @default([]) // array of strings for multiple CPT descriptions
+
+  icdCodes     String[] @default([]) // array of strings for multiple ICD codes
+  icdCodes_iv  String[] @default([]) // array of strings for multiple ICD codes (encrypted)
+  icdCodes_tag String[] @default([]) // array of strings for multiple ICD codes
+
+  icdDescriptions     String[] @default([]) // array of strings for multiple ICD descriptions
+  icdDescriptions_iv  String[] @default([]) // array of strings for multiple ICD descriptions (encrypted)
+  icdDescriptions_tag String[] @default([]) // array of strings for multiple ICD descriptions (tagged)
+
+  placesOfService     String[] @default([]) // array of strings for multiple places of service
+  placesOfService_iv  String[] @default([]) // array of strings for multiple places of service (encrypted)
+  placesOfService_tag String[] @default([]) // array of strings for multiple places of
+
+  serviceTypes     String[] @default([]) // array of strings for multiple service types
+  serviceTypes_iv  String[] @default([]) // array of strings for multiple service types (encrypted)
+  serviceTypes_tag String[] @default([]) // array of strings for multiple service types (
+
+  modifiers     String[] @default([]) // array of strings for multiple modifiers
+  modifiers_iv  String[] @default([]) // array of strings for multiple modifiers (encrypted)
+  modifiers_tag String[] @default([]) // array of strings for multiple modifiers (tagged
+
+  bodyParts     String[] @default([]) // array of strings for multiple body parts
+  bodyParts_iv  String[] @default([]) // array of strings for multiple body parts (encrypted)
+  bodyParts_tag String[] @default([]) // array of strings for multiple body parts (
+
+  testNames     String[] @default([]) // array of strings for multiple test names
+  testNames_iv  String[] @default([]) // array of strings for multiple test names (encrypted)
+  testNames_tag String[] @default([]) // array of strings for multiple test names (tagged)
+
+  testCodes     String[] @default([]) // array of strings for multiple test codes
+  testCodes_iv  String[] @default([]) // array of strings for multiple test codes (encrypted)
+  testCodes_tag String[] @default([]) // array of strings for multiple test codes (
+
+  customFields     String[] @default([]) // array of strings for custom fields
+  customFields_iv  String[] @default([]) // array of strings for custom fields (encrypted)
+  customFields_tag String[] @default([]) // array of strings for custom fields (tag
+
+  productGroupId     String? // optional, can be null
+  productGroupId_iv  String? // now nullable (defaults to NULL)
+  productGroupId_tag String? // likewise
+
+  productId     String? // optional, can be null
+  productId_iv  String? // now nullable (defaults to NULL)
+  productId_tag String? // likewise
+
+  /* Fields for Claim Status Inquiries ONLY */
+  claimNumber String?
+  claimNumber_iv String?
+  claimNumber_tag String?
+
+  amountToBePaid String?
+  amountToBePaid_iv String?
+  amountToBePaid_tag String?
+
+  // ---------- FHIR-aware fields (no Appointment model) ----------
+  fhirAppointmentId String?   // scheduled Appointment.id (if present)
+  fhirEncounterId   String?   // actual FHIR Encounter.id
+  scheduledStart    DateTime? // Appointment.start
+  scheduledEnd      DateTime? // Appointment.end
+  appointmentStatus String?   // booked|arrived|fulfilled|cancelled|noshow...
+
+  // Add an array of file urls
+  status   String   @default("Pending") // default to "PENDING"
+  priority Priority @default(SAME_DAY)
+
+  version   Int      @default(1)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patientId   String
+  physicianId String
+  facilityId  String
+
+  // Add a relation to the Patient model
+  patient   Patient        @relation(fields: [patientId], references: [id])
+  physician Physician      @relation(fields: [physicianId], references: [id])
+  facility  Facility       @relation(fields: [facilityId], references: [id])
+  actions   OrganizationAction[]
+  files     File[] // relation to multiple File records
+  encounterType EncounterType @default(ELIGIBILITY_AND_BENEFITS)
+  encounterLinks EhrEncounterLink[]
+  documents Document[]
+
+  @@index([patientId])
+  @@index([physicianId])
+  @@index([facilityId])
+  @@index([fhirAppointmentId])
+  @@index([fhirEncounterId])
+  @@index([scheduledStart, appointmentStatus])
+}
+
+enum Action {
+  ELIGIBILITY_AND_BENEFITS
+  APPEALS
+  CLAIM_STATUS_INQUIRIES
+  DENIALS
+  PRIOR_AUTHORIZATION
+}
+
+enum Priority {
+  STAT
+  SAME_DAY
+  SAME_WEEK
+  NOT_APPLICABLE
+}
+
+model OrganizationAction {
+  id             String   @id @default(cuid())
+  encounterId    String
+  date           DateTime
+  type           Action
+  content        String?
+  content_iv     String? // now nullable (defaults to NULL)
+  content_tag    String? // likewise
+  transcript     String?
+  transcript_iv  String? // now nullable (defaults to NULL)
+  transcript_tag String? // likewise
+  summary        String?
+  summary_iv     String? // now nullable (defaults to NULL)
+  summary_tag    String? // likewise
+  structuredData Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organizationId String?
+  // Add an array of file urls
+
+  // Voice AI call duration tracking
+  callDurationSeconds Int?
+
+  encounter Encounter @relation(fields: [encounterId], references: [id])
+  files     File[]
+
+  @@index([encounterId])
+}
+
+model File {
+  id        String   @id @default(cuid())
+  name      String
+  name_iv   String? // now nullable (defaults to NULL)
+  name_tag  String? // likewise
+  fileType  String
+  url       String   @unique
+  url_iv    String? // now nullable (defaults to NULL)
+  url_tag   String? // likewise
+  key       String // S3 key, for generating signed URLs later
+  key_iv    String? // now nullable (defaults to NULL)
+  key_tag   String? // likewise
+  size      Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Add a relation to the Encounter model
+  organizationActionId String?
+  action         OrganizationAction? @relation(fields: [organizationActionId], references: [id])
+  Encounter      Encounter?    @relation(fields: [encounterId], references: [id])
+  encounterId    String?
+  Insurance      Insurance[]
+  documents      Document[]
+
+  @@index([encounterId])
+}
+
+// ==============================
+// EHR vendor–agnostic integration
+// ==============================
+enum EhrVendor {
+  MODMED
+  AMAZING_CHARTS
+}
+
+enum SourceSystem {
+  MODMED
+  AMAZING_CHARTS
+  MANUAL
+}
+
+enum PracticeEnvironment {
+  PRODUCTION
+  SANDBOX
+}
+
+model Practice {
+  id                   String    @id @default(cuid())
+  name                 String
+  vendor               EhrVendor
+  fhirBaseUrl          String    // per-practice FHIR R4 base URL
+  ssmUsernameParam     String?   // SSM parameter name: ModMed username
+  ssmPasswordParam     String?   // SSM parameter name: ModMed password
+  ssmClientIdParam     String?   // SSM parameter name (optional for ModMed sandbox)
+  ssmClientSecretParam String?   // SSM parameter name
+  ssmApiKeyParam       String?
+  isActive             Boolean   @default(true)
+  environment          PracticeEnvironment @default(PRODUCTION)
+  lastConnectedAt      DateTime?
+  oauthAuthUrlOverride  String?
+  oauthTokenUrlOverride String?
+  scopes               String?
+  organizationId       String?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+
+  patientLinks   EhrPatientLink[]
+  encounterLinks EhrEncounterLink[]
+  docLinks       EhrDocumentLink[]
+  cursors        SyncCursor[]
+  locationLinks  EhrLocationLink[]
+  documents      Document[]
+  outboundMessages OutboundMessage[]
+
+  @@index([organizationId])
+  @@unique([vendor, fhirBaseUrl, environment, organizationId], name: "practice_unique_key")
+}
+
+
+model OrganizationInsurancePhoneMapping {
+  id             String   @id
+  organizationId String
+  insuranceName  String
+  insurancePhone String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+
+  @@unique([organizationId, insuranceName])
+}
+
+model OrganizationPhysicianNpiMapping {
+  id             String   @id
+  organizationId String
+  physicianName  String
+  physicianNpi   String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime
+
+  @@unique([organizationId, physicianName])
+}
+
+
+model OutboundMessage {
+  id           String   @id @default(cuid())
+  practiceId   String
+  vendor       EhrVendor
+  resourceType String   // Communication | DocumentReference | Task
+  localType    String   // OrganizationAction | Document | Encounter
+  localId      String
+  fhirId       String?
+  status       String   @default("PENDING") // PENDING|SENT|FAILED
+  attemptCount Int      @default(0)
+  lastError    String?
+  payloadSha   String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  Practice Practice @relation(fields: [practiceId], references: [id])
+
+  @@index([practiceId, resourceType, status])
+}
+
+model SyncCursor {
+  id         String   @id @default(cuid())
+  practiceId String
+  resource   String   // "Patient" | "Encounter" | "DocumentReference"
+  since      DateTime // watermark for incrementals
+  lastRunAt  DateTime @default(now())
+  status     String   @default("OK")
+  lastError  String?
+
+  Practice Practice @relation(fields: [practiceId], references: [id])
+
+  @@unique([practiceId, resource])
+}
+
+model EhrPatientLink {
+  id            String    @id @default(cuid())
+  practiceId    String
+  vendor        EhrVendor
+  patientId     String
+  fhirPatientId String
+  mrnSystem     String?
+  mrnValue      String?
+  lastSeenAt    DateTime  @default(now())
+
+  Practice Practice @relation(fields: [practiceId], references: [id])
+  Patient  Patient  @relation(fields: [patientId], references: [id])
+
+  @@unique([practiceId, fhirPatientId])
+  @@index([patientId])
+  @@index([practiceId, vendor, mrnSystem, mrnValue])
+}
+
+model EhrEncounterLink {
+  id                String    @id @default(cuid())
+  practiceId          String
+  vendor              EhrVendor
+  encounterId         String
+  fhirEncounterId     String?  // upstream Encounter.id
+  fhirAppointmentId   String?  // upstream Appointment.id
+  lastSeenAt          DateTime @default(now())
+
+  Practice  Practice  @relation(fields: [practiceId], references: [id])
+  Encounter Encounter @relation(fields: [encounterId], references: [id])
+
+  @@unique([practiceId, fhirEncounterId])
+  @@index([encounterId])
+  @@index([practiceId, vendor, fhirAppointmentId])
+}
+
+model Document {
+  id                      String       @id @default(cuid())
+  practiceId              String
+  patientId               String?
+  encounterId             String?
+  fileId                  String       // references File.id
+  type                    String?      // CCDA, Progress Note, etc.
+  categoryCodes           String[]     @default([])
+  status                  String?      // current | superseded | entered-in-error
+  docDate                 DateTime?
+  fhirDocumentReferenceId String
+  sha256                  String?
+  sizeBytes               Int?
+  source                  SourceSystem @default(MODMED)
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+
+  Practice  Practice  @relation(fields: [practiceId], references: [id])
+  Patient   Patient?  @relation(fields: [patientId], references: [id])
+  Encounter Encounter? @relation(fields: [encounterId], references: [id])
+  File      File      @relation(fields: [fileId], references: [id])
+  docLinks  EhrDocumentLink[]
+
+  @@unique([practiceId, fhirDocumentReferenceId])
+  @@index([patientId])
+  @@index([encounterId])
+  @@index([practiceId, docDate])
+}
+
+model EhrDocumentLink {
+  id                      String   @id @default(cuid())
+  practiceId              String
+  vendor                  EhrVendor
+  documentId              String
+  fhirDocumentReferenceId String   @unique
+  lastSeenAt              DateTime @default(now())
+  etag                    String?
+
+  Practice Practice @relation(fields: [practiceId], references: [id])
+  Document Document @relation(fields: [documentId], references: [id])
+
+  @@index([practiceId, vendor, documentId])
+}
+
+model EhrLocationLink {
+  id             String   @id @default(cuid())
+  practiceId     String
+  facilityId     String
+  fhirLocationId String
+  active         Boolean  @default(true)
+  effectiveStart DateTime @default(now())
+  effectiveEnd   DateTime?
+
+  Practice Practice @relation(fields: [practiceId], references: [id])
+  Facility Facility @relation(fields: [facilityId], references: [id])
+
+  @@unique([practiceId, fhirLocationId])
+  @@index([facilityId])
+}
+
+// ----------------------------------------------------------------------------
+// Denial Intelligence timeline events
+// These persist structural changes (e.g., “started physician credentialing”)
+// so we can overlay them on denial / revenue trends per organization.
+// ----------------------------------------------------------------------------
+model DenialIntelligenceEvent {
+  id             String   @id @default(cuid())
+  organizationId String   // Clerk organization / biller id
+
+  /// Calendar date when the structural change took effect.
+  eventDate      DateTime
+
+  /// Short label shown on the dashboard timeline (e.g. “Start credentialing”).
+  label          String
+
+  /// Longer free‑text description shown in the modal.
+  description    String?
+
+  /// Optional metric this event primarily targets (e.g. "denied_amount").
+  metric         String?
+
+  /// Optional free‑form tags for future grouping / filtering.
+  tags           String[] @default([])
+
+  /// Optional JSON payload for advanced analytics (linked playbooks, IDs, etc.).
+  metadata       Json?
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model ReceptionistCall {
+  id              String   @id @default(cuid())
+  dialId          String   @unique
+  status          String? // queued, ringing, in-progress, completed, failed, etc.
+  endReason       String? // systemResultType
+  transcript      Json? // array of transcript entries
+  aiResult        Json? // AI result object
+  durationSeconds Int?
+  toNumber        String? // phone number called
+  organizationId  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([dialId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([createdAt])
+}

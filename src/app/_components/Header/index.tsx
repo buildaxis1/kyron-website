@@ -1,0 +1,440 @@
+"use client";
+
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useTheme } from "next-themes";
+import menuData from "./menuData";
+import GetStarted from "../ui/started-button";
+import ThemeToggler from "./ThemeToggler";
+import AnchorLink from "../ui/anchor-link";
+import { toast } from "sonner";
+import {
+  BookOpenText,
+  FileText,
+  Newspaper,
+  FolderKanban,
+  Code2,
+  ArrowRight,
+} from "lucide-react";
+
+type SubIconKey =
+  | "Blog"
+  | "Case Studies"
+  | "Whitepapers"
+  | "FAQs"
+  | "For Developers";
+
+const iconFor: Record<SubIconKey, JSX.Element> = {
+  Blog: <Newspaper className="h-4 w-4" />,
+  "Case Studies": <FolderKanban className="h-4 w-4" />,
+  Whitepapers: <FileText className="h-4 w-4" />,
+  FAQs: <BookOpenText className="h-4 w-4" />,
+  "For Developers": <Code2 className="h-4 w-4" />,
+};
+
+const ANNOUNCEMENT = {
+  text: "HIPAA‑compliant denial automation for modern RCM teams.",
+  cta: "Find out more",
+  href: "/#how-it-works",
+};
+
+const QUICK_FILTERS = [
+  { id: "eb", label: "Eligibility & Benefits", href: "/#how-it-works" },
+  { id: "pa", label: "Prior Authorization", href: "/#how-it-works" },
+  { id: "cs", label: "Claim Status", href: "/#how-it-works" },
+  { id: "da", label: "Denial Appeals", href: "/#how-it-works" },
+];
+
+export default function Header() {
+  const pathname = usePathname();
+  const { theme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // Fixed top bar state
+  const [navbarOpen, setNavbarOpen] = useState(false);
+  const [isStuck, setIsStuck] = useState(false);
+
+  // Dynamic text colors based on theme (only after mount to prevent hydration issues)
+  const textColor = mounted && theme === 'dark' ? '#FFFFFF' : '#1F2937';
+  const hoverColor = '#577DE8';
+
+  // Measure top bar height so we can offset content with a spacer
+  const topbarRef = useRef<HTMLDivElement | null>(null);
+  const [topbarH, setTopbarH] = useState(80);
+
+  // Set mounted to true after hydration to prevent SSR/client mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const onScroll = () => setIsStuck(window.scrollY >= 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const measure = () => {
+      setTopbarH(topbarRef.current?.offsetHeight ?? 80);
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    return () => window.removeEventListener("resize", measure);
+  }, []);
+
+  // Close mobile menu when clicking outside and prevent body scroll
+  useEffect(() => {
+    if (navbarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [navbarOpen]);
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const handleMouseEnter = (index: number) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+    setHoverIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    // Delay closing to allow moving cursor into dropdown
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoverIndex(null);
+    }, 150);
+  };
+
+  const handleDropdownEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+  };
+
+  const handleDropdownLeave = () => {
+    setHoverIndex(null);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const isActive = (path?: string) => {
+    if (!path) return false;
+    if (path === "/") return pathname === "/";
+    return pathname === path || pathname?.startsWith(path);
+  };
+
+  const showExtras = useMemo(
+    () => pathname === "/" || pathname === "",
+    [pathname],
+  );
+
+  return (
+    <>
+      {/* Fixed topbar only (compact, non-blocking) */}
+      <div
+        ref={topbarRef}
+        className={`fixed left-0 top-0 z-[100] w-full border-b border-border/20 bg-background/80 backdrop-blur-md transition-all duration-300 ${
+          isStuck ? "shadow-lg border-border/40" : "shadow-sm"
+        }`}
+      >
+        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
+          {/* Brand */}
+          <Link href="/" className="relative block h-12 w-[190px] shrink-0">
+            <Image
+              src="/images/logo/kyron_medical.png"
+              alt="Kyron Medical"
+              fill
+              className="object-contain"
+              priority
+            />
+          </Link>
+
+          {/* Desktop nav */}
+          <nav className="hidden items-center gap-8 lg:flex xl:gap-10">
+            {menuData.map((menuItem, index) => {
+              const active = isActive(menuItem.path);
+              const hasSub = !!menuItem.submenu?.length;
+              const isResources = menuItem.title === "Resources";
+
+              return (
+                <div
+                  key={menuItem.id}
+                  className="relative"
+                  onMouseEnter={() => handleMouseEnter(index)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {menuItem.path ? (
+                    menuItem.path.includes("#") ? (
+                      <AnchorLink
+                        href={menuItem.path}
+                        className="text-[15px] font-medium transition-colors duration-200"
+                        style={{
+                          color: active ? hoverColor : textColor
+                        }}
+                      >
+                        {menuItem.title}
+                      </AnchorLink>
+                    ) : (
+                      <Link
+                        href={menuItem.path}
+                        className="text-[15px] font-medium transition-colors duration-200"
+                        style={{
+                          color: active ? hoverColor : textColor
+                        }}
+                      >
+                        {menuItem.title}
+                      </Link>
+                    )
+                  ) : (
+                    <button
+                      className="text-[15px] font-medium transition-colors duration-200"
+                      style={{ color: textColor }}
+                      onClick={() =>
+                        setHoverIndex((v) => (v === index ? null : index))
+                      }
+                    >
+                      {menuItem.title}
+                    </button>
+                  )}
+
+                  {/* Resources mega menu */}
+                  {hasSub && isResources && hoverIndex === index && (
+                    <div 
+                      className="absolute left-1/2 top-[115%] w-[520px] -translate-x-1/2 rounded-2xl border border-border bg-card/95 p-4 shadow-xl backdrop-blur"
+                      onMouseEnter={handleDropdownEnter}
+                      onMouseLeave={handleDropdownLeave}
+                    >
+                      <div className="grid grid-cols-2 gap-3">
+                        {menuItem.submenu!.map((s) => (
+                          <Link
+                            key={s.id}
+                            href={s.path!}
+                            className="group flex items-start gap-3 rounded-lg border border-transparent p-3 transition hover:border-border hover:bg-muted/40"
+                          >
+                            <span className="mt-0.5 text-muted-foreground">
+                              {iconFor[s.title as SubIconKey] ?? (
+                                <FileText className="h-4 w-4" />
+                              )}
+                            </span>
+                            <div>
+                              <p className="text-sm font-medium text-foreground group-hover:text-primary">
+                                {s.title}
+                              </p>
+                              <p className="text-xs text-muted-foreground">
+                                {s.title === "Blog" &&
+                                  "Product updates and insights"}
+                                {s.title === "Case Studies" &&
+                                  "Real results from teams like yours"}
+                                {s.title === "Whitepapers" &&
+                                  "Deep dives and best practices"}
+                                {s.title === "FAQs" &&
+                                  "Common questions answered"}
+                                {s.title === "For Developers" &&
+                                  "API keys, webhooks, and docs"}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+
+          {/* Right stack (desktop) */}
+          <div className="hidden items-center gap-4 lg:flex">
+            <ThemeToggler />
+            <GetStarted />
+          </div>
+
+          {/* Hamburger (mobile) */}
+          <button
+            onClick={() => setNavbarOpen((s) => !s)}
+            aria-label={navbarOpen ? "Close menu" : "Open menu"}
+            className="relative flex h-10 w-10 flex-col items-center justify-center space-y-1 rounded-lg transition-colors hover:bg-muted/50 lg:hidden"
+          >
+            <span
+              className={`block h-0.5 w-6 bg-foreground transition-all duration-300 ${
+                navbarOpen ? "translate-y-1.5 rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-foreground transition-all duration-300 ${
+                navbarOpen ? "opacity-0" : ""
+              }`}
+            />
+            <span
+              className={`block h-0.5 w-6 bg-foreground transition-all duration-300 ${
+                navbarOpen ? "-translate-y-1.5 -rotate-45" : ""
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Mobile drawer (below top row) */}
+        <div
+          className={`lg:hidden ${
+            navbarOpen ? "block" : "hidden"
+          } border-t border-border/60 bg-background/95 backdrop-blur`}
+        >
+          <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+            {/* Navigation Links */}
+            <nav className="mb-6">
+              <ul className="space-y-1">
+                {menuData.map((menuItem) => (
+                  <li key={menuItem.id}>
+                    {menuItem.path ? (
+                      menuItem.path.includes("#") ? (
+                        <AnchorLink
+                          href={menuItem.path}
+                          className="block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50"
+                          style={{
+                            color: isActive(menuItem.path) ? hoverColor : textColor,
+                            backgroundColor: isActive(menuItem.path) ? 'rgba(87, 125, 232, 0.1)' : 'transparent'
+                          }}
+                          onClick={() => setNavbarOpen(false)}
+                        >
+                          {menuItem.title}
+                        </AnchorLink>
+                      ) : (
+                        <Link
+                          href={menuItem.path}
+                          className="block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50"
+                          style={{
+                            color: isActive(menuItem.path) ? hoverColor : textColor,
+                            backgroundColor: isActive(menuItem.path) ? 'rgba(87, 125, 232, 0.1)' : 'transparent'
+                          }}
+                          onClick={() => setNavbarOpen(false)}
+                        >
+                          {menuItem.title}
+                        </Link>
+                      )
+                    ) : (
+                      <details className="group">
+                        <summary 
+                          className="block py-2 px-3 text-base font-medium hover:bg-muted/50 rounded-lg cursor-pointer list-none"
+                          style={{ color: textColor }}
+                        >
+                          {menuItem.title}
+                          <svg className="ml-2 inline h-3 w-3 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </summary>
+                        <div className="mt-1 pl-3 space-y-1">
+                          {menuItem.submenu?.map((s) => (
+                            <Link
+                              key={s.id}
+                              href={s.path!}
+                              className="block py-1.5 px-3 text-sm hover:bg-muted/30 rounded-lg transition-colors"
+                              style={{ color: mounted && theme === 'dark' ? '#D1D5DB' : '#374151' }}
+                              onClick={() => setNavbarOpen(false)}
+                            >
+                              {s.title}
+                            </Link>
+                          ))}
+                        </div>
+                      </details>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            {/* Mobile Auth Section */}
+            <div className="border-t border-border/60 pt-6 space-y-4">
+              {/* Theme Toggle */}
+              <div className="flex justify-center py-2">
+                <ThemeToggler />
+              </div>
+              
+              {/* Actions */}
+              <div className="space-y-3">
+                <div className="flex justify-center">
+                  <GetStarted />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Spacer so hero never hides under fixed bar */}
+      <div style={{ height: topbarH + 8 }} aria-hidden />
+
+      {/* Announcement + Filters now in normal flow (no overlap with hero) */}
+      {showExtras && (
+        <>
+          <AnnouncementBar />
+          <QuickFiltersBar />
+          {/* Additional spacing after header bars */}
+          <div className="h-4" aria-hidden />
+        </>
+      )}
+    </>
+  );
+}
+
+/* ----- Non-fixed bars (sit above hero, never overlap) ----- */
+
+function AnnouncementBar() {
+  return (
+    <div className="w-full border-b border-border/80 bg-background/70 py-4">
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 lg:px-8">
+        <p className="text-sm text-muted-foreground">{ANNOUNCEMENT.text}</p>
+        <AnchorLink
+          href={ANNOUNCEMENT.href}
+          onClick={() =>
+            toast.info("Learn more", {
+              description: "Explore Kyron's workflows and live preview.",
+            })
+          }
+          className="inline-flex items-center gap-2 rounded-full bg-[#577DE8] px-3 py-1 text-xs font-semibold text-white transition hover:bg-blue-700"
+        >
+          {ANNOUNCEMENT.cta}
+          <ArrowRight className="h-3.5 w-3.5" />
+        </AnchorLink>
+      </div>
+    </div>
+  );
+}
+
+function QuickFiltersBar() {
+  return (
+    <div className="w-full border-b border-border/80 bg-background/80 py-3">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        <div className="no-scrollbar flex gap-2 overflow-x-auto">
+          {QUICK_FILTERS.map((f, i) => (
+            <AnchorLink
+              key={f.id}
+              href={f.href}
+              className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3 py-1.5 text-xs transition ${
+                i === 0
+                  ? "border-[#577DE8] bg-[#577DE8]/20 text-[#577DE8]"
+                  : "border-[#577DE8] bg-[#577DE8]/20 text-[#577DE8] hover:bg-[#577DE8]/40"
+              }`}
+            >
+              {f.label}
+            </AnchorLink>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

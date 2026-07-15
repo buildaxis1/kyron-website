@@ -1,0 +1,63 @@
+.scroller {
+  max-width: 5200px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  padding: 1rem 0;
+}
+
+.scroller__inner {
+  display: flex;
+  gap: 4rem;
+  flex-wrap: nowrap;
+  align-items: center;
+   animation: scroll var(--_animation-duration, 20s) linear infinite; /* Apply animation */
+}
+
+
+.scroller__inner li {
+  flex: 0 0 auto; 
+}
+
+.scroller__inner img {
+  max-width: 200px; /* or any desired width */
+  height: auto;
+}
+
+.scroller[data-animated="true"] {
+  /* Items outside of the bounds of the carousel are hidden */
+  overflow: hidden;
+  /* Mask is applied that creates a fade effect at the edges of the carousel.  */
+  --webkit-mask: linear-gradient(
+    90deg,
+    transparent,
+    white 20%,
+    white 80%,
+    transparent
+  );
+  mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+}
+
+.scroller[data-animated="true"] .scroller__inner {
+  /* The children are not allowed to wrap (i.e., they are displayed in a single line) */
+  flex-wrap: nowrap;
+  /* Animation is applied that scrolls the items. The duration of the animation 
+    is controlled by the --_animation-duration custom property, which defaults 
+    to 90 seconds if not specified. The animation repeats infinitely. */
+  animation: scroll var(--_animation-duration, 90s)
+    var(--animation-direction, forwards) linear infinite;
+}
+
+.scroller[data-duration="fast"] {
+  --_animation-duration: 20s;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
