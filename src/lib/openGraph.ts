@@ -1,5 +1,3 @@
-import axios from "axios";
-
 interface OpenGraphData {
   ogTitle?: string;
   ogDescription?: string;
@@ -32,22 +30,11 @@ function extractTitle(html: string): string | undefined {
   return match ? match[1] : undefined;
 }
 
-export async function scrapeOpenGraph(url: string): Promise<OpenGraphData> {
-  try {
-    const response = await axios.get(url);
-    const html = response.data as string;
-
-    const ogData: OpenGraphData = {
-      ogTitle: extractMetaContent(html, "og:title") ?? extractTitle(html),
-      ogDescription:
-        extractMetaContent(html, "og:description") ??
-        extractMetaContent(html, "description"),
-      ogImage: extractMetaContent(html, "og:image"),
-    };
-
-    return ogData;
-  } catch (error: unknown) {
-    console.error("Failed to fetch metadata:", error);
-    throw new Error("Failed to fetch metadata");
-  }
+// External fetching is disabled in this build — scrapeOpenGraph makes no
+// network request and returns empty metadata. The HTML-parsing helpers below
+// are retained for when a real fetch is wired back in.
+export async function scrapeOpenGraph(_url: string): Promise<OpenGraphData> {
+  void extractMetaContent;
+  void extractTitle;
+  return {};
 }

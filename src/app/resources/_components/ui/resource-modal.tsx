@@ -38,35 +38,9 @@ export default function ResourceModal({
     if (e.target === e.currentTarget) onClose();
   };
 
-  const handleEmailSuccess = (email: string) => {
-    // Redirect to the resource
-
-    // Make an API call to the backend to log the email collection
-    fetch("https://api.kyronmedical.com/bapi/collect-email", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        resourceUrl,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Failed to log email collection");
-        }
-        return response.json();
-      })
-      .then(() => {
-        // Successfully logged, now redirect
-        window.location.href = resourceUrl;
-      })
-      .catch((error) => {
-        console.error("Error logging email collection:", error);
-        // Optionally handle error (e.g., show a message to the user)
-      });
-
+  const handleEmailSuccess = (_email: string) => {
+    // Email collection API disabled in this build — no external request is made.
+    // Redirect straight to the resource.
     window.location.href = resourceUrl;
   };
 

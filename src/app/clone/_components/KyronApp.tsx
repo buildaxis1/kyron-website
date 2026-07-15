@@ -8,8 +8,9 @@ import { Toast } from "./Toast";
 import type { SetupStep as SetupStepType } from "@/lib/types";
 import type { ToastState } from "./Toast";
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_CLONE_BACKEND_URL || "https://api.kyronmedical.com";
+// External backend disabled in this build. Set NEXT_PUBLIC_CLONE_BACKEND_URL
+// to re-enable; empty by default so no external call is ever made.
+const BACKEND_URL = process.env.NEXT_PUBLIC_CLONE_BACKEND_URL || "";
 const bg = "bg-gradient-to-br from-slate-50 via-slate-100 to-slate-50";
 const card = "bg-white border border-gray-200 rounded-2xl shadow-sm";
 const inputClasses =
@@ -57,6 +58,9 @@ export function KyronApp() {
       form.append("audio", audioBlob, "sample.webm");
       form.append("voiceName", name || "My Clone");
 
+      if (!BACKEND_URL) {
+        throw new Error("Clone demo is disabled in this build.");
+      }
       const res = await fetch(`${BACKEND_URL}/api/clone/setup`, {
         method: "POST",
         body: form,

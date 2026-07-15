@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import emailjs from "@emailjs/browser";
 import {
   Star,
   MapPin,
@@ -101,11 +100,6 @@ function Label({ htmlFor, children }: { htmlFor: string; children: React.ReactNo
   );
 }
 
-// ─── EmailJS config — fill these in from emailjs.com dashboard ───────────────
-const EMAILJS_SERVICE_ID = "service_0rilun7";
-const EMAILJS_TEMPLATE_ID = "template_mmwxary";
-const EMAILJS_PUBLIC_KEY = "MezDt8uygro3u5TOp";
-
 type Status = "idle" | "loading" | "success" | "error";
 
 export default function Contact() {
@@ -125,31 +119,10 @@ export default function Contact() {
     e.preventDefault();
     setStatus("loading");
 
-    const templateParams = {
-      to_email: "jay@kyronmedical.com",
-      from_name: `${firstName} ${lastName}`,
-      from_email: workEmail,
-      phone,
-      job_title: jobTitle,
-      company: companyName,
-      specialty,
-      provider_count: providerCount,
-      ehr_system: ehr,
-      heard_about: heardAbout,
-    };
-
-    try {
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        templateParams,
-        EMAILJS_PUBLIC_KEY
-      );
-      setStatus("success");
-    } catch (err) {
-      console.error("EmailJS error:", err);
-      setStatus("error");
-    }
+    // Contact form submission is disabled in this build — no external request
+    // is made. The form simulates a successful submit for demonstration only.
+    await new Promise((r) => setTimeout(r, 400));
+    setStatus("success");
   };
 
   return (

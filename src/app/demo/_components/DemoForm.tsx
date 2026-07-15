@@ -53,62 +53,12 @@ const DemoForm = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append("files", patientNotesFile);
-    formData.append("files", insuranceDenialFile);
-    console.log(formData);
-
-    try {
-      // Define the fetch promise with proper error handling
-      const fetchPromise = async () => {
-        const response = await fetch(
-          "https://api.kyronmedical.com/generate-appeal",
-          {
-            method: "POST",
-            body: formData,
-          },
-        );
-
-        if (response.ok) {
-          const data = (await response.json()) as AppealResponse;
-          const appealLetter = data.appeal_letter;
-
-          // Update the state to display the appeal letter
-          setAppealLetter(appealLetter);
-
-          // Create a blob from the appeal letter text for download
-          const blob = new Blob([appealLetter], { type: "text/plain" });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "appeal_letter.txt";
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          window.URL.revokeObjectURL(url); // Clean up the URL object
-        } else {
-          const errorData = (await response.json()) as ErrorResponse;
-          throw new Error(errorData.error || "Failed to generate appeal.");
-        }
-      };
-
-      // Use toast.promise with proper promise handling
-      void toast.promise(
-        fetchPromise(),
-        {
-          pending: "Generating your appeal letter...",
-          success: "Appeal letter generated successfully!",
-          error: "Failed to generate appeal letter.",
-        },
-        {
-          style: {
-            minWidth: "250px",
-          },
-        },
-      );
-    } catch (error: unknown) {
-      console.error("Error during appeal generation:", error);
-    }
+    // External API disabled in this build — no network request is made.
+    setAppealLetter(
+      "This is a demo build. Appeal-letter generation is disabled and no " +
+        "external request was sent.",
+    );
+    toast.info("Demo build — appeal generation is disabled (no external calls).");
   };
 
   return (

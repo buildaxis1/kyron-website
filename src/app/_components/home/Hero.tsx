@@ -20,7 +20,6 @@ import {
   TrendingUp,
   TrendingDown,
 } from "lucide-react";
-import { Analytics } from "@vercel/analytics/react";
 
 type Props = {
   className?: string;
@@ -58,7 +57,6 @@ const Hero: React.FC<Props> = () => {
 
   return (
     <>
-      <Analytics />
       <section
         id="home"
         className="relative z-10 overflow-hidden"

@@ -5,8 +5,9 @@ import { StepHeader } from "./StepHeader";
 import { StatusPill } from "./StatusPill";
 import type { CallState, TranscriptItem } from "@/lib/types";
 
-const BACKEND_URL =
-  process.env.NEXT_PUBLIC_CLONE_BACKEND_URL || "https://api.kyronmedical.com";
+// External backend disabled in this build. Set NEXT_PUBLIC_CLONE_BACKEND_URL
+// to re-enable; empty by default so no external call is ever made.
+const BACKEND_URL = process.env.NEXT_PUBLIC_CLONE_BACKEND_URL || "";
 const avatar = {
   user: "rgba(219,234,254,1)",
   agent: "linear-gradient(135deg, #059669, #047857)",
@@ -86,6 +87,9 @@ export function CallStep({
         originalError.current?.(...args);
       };
 
+      if (!BACKEND_URL) {
+        throw new Error("Clone demo is disabled in this build.");
+      }
       const res = await fetch(`${BACKEND_URL}/api/clone/dial`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
