@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { ArrowRight } from "lucide-react";
 
 const ANNOUNCEMENT = {
-  text: "HIPAA‑compliant denial automation for modern RCM teams.",
+  text: "HIPAA‑compliant voice AI for patient calls and payer calls.",
   cta: "Find out more",
   href: "/#how-it-works",
 };

@@ -17,12 +17,13 @@ export default function Home() {
       <ScrollUp data-oid="l76ff4z" />
       <Hero data-oid="wfk8cn5" />
 
-      <Testimonials data-oid="testimonials" />
+      {/* Products first: receptionist + payer voice AI above denial content */}
+      <MedicalAIReceptionist data-oid="ai-receptionist-section" />
+      <RevenueCycleAI data-oid="rcm-ai-section" />
 
       <VoiceAIPanel data-oid="voice-ai-panel" />
 
-      <MedicalAIReceptionist data-oid="ai-receptionist-section" />
-      <RevenueCycleAI data-oid="rcm-ai-section" />
+      <Testimonials data-oid="testimonials" />
 
       <DashboardPreview data-oid="d6dekul" />
       <HealthcareTechnologistsCarousel data-oid="healthcare-technologists" />
