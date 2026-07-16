@@ -8,6 +8,8 @@ import Offerings from "./_components/home/Offerings";
 import Pipeline from "./_components/home/Pipeline";
 import HealthcareTechnologistsCarousel from "./_components/home/HealthcareTechnologistsCarousel";
 import EHRCarousel from "./_components/home/EHRCarousel";
+import MedicalAIReceptionist from "./_components/home/MedicalAIReceptionist";
+import RevenueCycleAI from "./_components/home/RevenueCycleAI";
 
 export default function Home() {
   return (
@@ -18,6 +20,9 @@ export default function Home() {
       <Testimonials data-oid="testimonials" />
 
       <VoiceAIPanel data-oid="voice-ai-panel" />
+
+      <MedicalAIReceptionist data-oid="ai-receptionist-section" />
+      <RevenueCycleAI data-oid="rcm-ai-section" />
 
       <DashboardPreview data-oid="d6dekul" />
       <HealthcareTechnologistsCarousel data-oid="healthcare-technologists" />
