@@ -117,7 +117,7 @@ export default function VoiceAIPanel() {
               transition={{ type: "spring", stiffness: 120, damping: 12 }}
               className="relative mt-6 flex justify-center scale-[0.65] sm:absolute sm:right-[10px] sm:top-[-10px] sm:mt-0 sm:scale-75 md:right-[-10px] md:top-[-28px] md:scale-100"
             >
-              <IPhoneCallScreen />
+              <IPhoneCallScreen calling={calling} />
             </motion.div>
 
             {/* Subtle connecting arc for desktop/tablet */}
@@ -312,16 +312,18 @@ function VoiceAIDashboard({
 
 /* ---------------- iPhone call screen ---------------- */
 
-function IPhoneCallScreen() {
+function IPhoneCallScreen({ calling }: { calling: boolean }) {
   // Kyron design language — device-style iPhone call UI with a live caller
   // block, waveform, and full call-controls grid. Pure CSS/React.
   const [seconds, setSeconds] = useState(46);
   useEffect(() => {
+    if (!calling) return;
     const tick = setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => clearInterval(tick);
-  }, []);
+  }, [calling]);
   const ss = String(seconds % 60).padStart(2, "0");
-  const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
+  // modulo keeps the decorative mock timer inside a valid mm:ss layout
+  const mm = String(Math.floor(seconds / 60) % 60).padStart(2, "0");
 
   return (
     <div className="animate-float relative h-[340px] w-[186px] rounded-[36px] border-[3px] border-neutral-800 bg-neutral-950 p-1.5 text-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] ring-1 ring-white/5 sm:h-[420px] sm:w-[228px] sm:rounded-[44px] md:h-[520px] md:w-[276px] md:rounded-[52px]">
@@ -351,9 +353,19 @@ function IPhoneCallScreen() {
 
         {/* Caller */}
         <div className="mt-6 flex flex-col items-center text-center sm:mt-9">
-          <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[9px] font-medium text-emerald-300 sm:text-[10px]">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
-            Verifying eligibility
+          <span
+            className={`mb-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-medium sm:text-[10px] ${
+              calling
+                ? "bg-emerald-500/15 text-emerald-300"
+                : "bg-neutral-500/20 text-neutral-400"
+            }`}
+          >
+            <span
+              className={`h-1.5 w-1.5 rounded-full ${
+                calling ? "animate-pulse bg-emerald-400" : "bg-neutral-500"
+              }`}
+            />
+            {calling ? "Verifying eligibility" : "Call ended"}
           </span>
           <div className="relative">
             <span className="absolute inset-0 animate-ping rounded-full bg-[#577DE8]/30" />

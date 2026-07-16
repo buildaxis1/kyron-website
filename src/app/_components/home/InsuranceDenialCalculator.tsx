@@ -11,7 +11,7 @@ import {
   TrendingUp,
   Users,
 } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 // State denial rates - All 50 states included
 const stateDenialRates = {
@@ -197,21 +197,21 @@ function Dropdown({
             className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-border bg-background py-1 shadow-lg"
           >
             {options.map((o) => (
-              <li
-                key={o.value}
-                role="option"
-                aria-selected={o.value === value}
-                onMouseDown={() => {
-                  onChange(o.value);
-                  setOpenDropdown(null);
-                }}
-                className={`cursor-pointer px-4 py-2 text-sm transition hover:bg-[#577DE8]/10 ${
-                  o.value === value
-                    ? "bg-[#577DE8]/10 font-medium text-[#577DE8]"
-                    : "text-foreground"
-                }`}
-              >
-                {o.label}
+              <li key={o.value} role="option" aria-selected={o.value === value}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(o.value);
+                    setOpenDropdown(null);
+                  }}
+                  className={`w-full cursor-pointer px-4 py-2 text-left text-sm transition hover:bg-[#577DE8]/10 focus:bg-[#577DE8]/10 focus:outline-none ${
+                    o.value === value
+                      ? "bg-[#577DE8]/10 font-medium text-[#577DE8]"
+                      : "text-foreground"
+                  }`}
+                >
+                  {o.label}
+                </button>
               </li>
             ))}
           </ul>
@@ -291,7 +291,6 @@ const InsuranceDenialCalculator = () => {
 
     toast.success("Demo request received! We'll be in touch soon.", {
       duration: 4000,
-      position: "bottom-center",
     });
     console.log("Demo requested for email:", email);
     // Add demo request logic here
@@ -427,7 +426,7 @@ const InsuranceDenialCalculator = () => {
                   Lost to denials / yr
                 </div>
                 <div className="mt-2 text-3xl font-bold">
-                  {hasResult ? formatCurrency(estimatedLoss) : "$0"}
+                  {hasResult ? formatCurrency(estimatedLoss) : "—"}
                 </div>
               </div>
               <div className="rounded-2xl bg-white/15 p-5 ring-1 ring-white/30 backdrop-blur">
@@ -436,10 +435,12 @@ const InsuranceDenialCalculator = () => {
                   Recoverable with Kyron
                 </div>
                 <div className="mt-2 text-3xl font-bold text-white">
-                  {hasResult ? formatCurrency(kyronSavings) : "$0"}
+                  {hasResult ? formatCurrency(kyronSavings) : "—"}
                 </div>
                 <div className="mt-1 text-[11px] text-blue-100">
-                  Based on 75% recovery
+                  {hasResult
+                    ? "Based on 75% recovery"
+                    : "Fill in your practice details to see your numbers"}
                 </div>
               </div>
             </div>

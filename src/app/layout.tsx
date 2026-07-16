@@ -36,6 +36,7 @@ export default function RootLayout({
       suppressHydrationWarning
       lang="en"
       className="overflow-x-hidden"
+      data-scroll-behavior="smooth"
       data-oid="nmt3l9-"
     >
       {/*
