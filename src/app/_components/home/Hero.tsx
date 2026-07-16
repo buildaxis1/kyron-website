@@ -36,14 +36,14 @@ const Hero: React.FC<Props> = () => {
           muted
           loop
           playsInline
-          preload="metadata"
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-cover object-[68%_center] sm:object-[72%_center]"
+          preload="auto"
+          aria-label="Kyron voice AI — real person answering a call"
+          className="absolute inset-0 h-full w-full scale-105 object-cover object-[78%_center] sm:object-[82%_center]"
         />
         {/* Left readability wash + soft vignette (Assort-style) */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-r from-[#0b0f17] via-[#0b0f17]/88 to-transparent max-lg:via-[#0b0f17]/70"
+          className="via-[#0b0f17]/88 absolute inset-0 bg-gradient-to-r from-[#0b0f17] to-transparent max-lg:via-[#0b0f17]/70"
         />
         <div
           aria-hidden
@@ -62,7 +62,7 @@ const Hero: React.FC<Props> = () => {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, ease: "easeOut" }}
-            className="relative z-10 max-w-xl min-w-0"
+            className="relative z-10 min-w-0 max-w-xl"
           >
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/85 backdrop-blur-md">
               <span className="inline-flex items-center gap-0.5 text-amber-400">
@@ -81,9 +81,9 @@ const Hero: React.FC<Props> = () => {
             </h1>
 
             <p className="mt-5 max-w-lg text-pretty text-base leading-relaxed text-white/75 sm:text-lg">
-              Kyron&apos;s AI voice agents answer patient calls, work payer phone
-              lines, and recover denied claims — so your team spends more time
-              with patients, not on hold.
+              Kyron&apos;s AI voice agents answer patient calls, work payer
+              phone lines, and recover denied claims — so your team spends more
+              time with patients, not on hold.
             </p>
 
             <div className="mt-8">
@@ -94,7 +94,7 @@ const Hero: React.FC<Props> = () => {
                   toast.success("Thanks! We’ll be in touch shortly.", {
                     description:
                       "Your demo request has been received by the Kyron team.",
-                    icon: <Sparkles className="h-4 w-4 text-yellow-400" />,
+                    icon: <Sparkles className="text-yellow-400 h-4 w-4" />,
                   })
                 }
               >
