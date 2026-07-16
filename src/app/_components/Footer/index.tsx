@@ -220,6 +220,40 @@ const Footer = () => {
                       </span>
                     </Link>
                   </li>
+                  <li data-oid="footer-careers">
+                    <Link
+                      href="/careers"
+                      aria-label="Link to Careers page"
+                      role="button"
+                      className="group relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/5 hover:pl-4 hover:text-primary hover:shadow-lg hover:shadow-primary/10"
+                      data-oid="footer-careers-link"
+                    >
+                      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-primary/10 to-transparent transition-transform duration-300 group-hover:translate-x-0" />
+                      <svg className="relative h-4 w-4 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:rotate-[-10deg]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                      <span className="relative font-medium">
+                        Careers
+                      </span>
+                    </Link>
+                  </li>
+                  <li data-oid="footer-blog">
+                    <Link
+                      href="/blog"
+                      aria-label="Link to Blog page"
+                      role="button"
+                      className="group relative inline-flex items-center gap-2 overflow-hidden rounded-lg px-3 py-2 text-sm text-muted-foreground transition-all duration-300 hover:-translate-y-0.5 hover:bg-primary/5 hover:pl-4 hover:text-primary hover:shadow-lg hover:shadow-primary/10"
+                      data-oid="footer-blog-link"
+                    >
+                      <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-primary/10 to-transparent transition-transform duration-300 group-hover:translate-x-0" />
+                      <svg className="relative h-4 w-4 opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:rotate-[-10deg]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                      </svg>
+                      <span className="relative font-medium">
+                        Blog
+                      </span>
+                    </Link>
+                  </li>
                 </ul>
               </div>
             </div>
