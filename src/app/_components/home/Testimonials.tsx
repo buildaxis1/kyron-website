@@ -144,7 +144,7 @@ export default function Testimonials() {
   const inView = useInView(ref, { once: true, margin: "-20% 0px -20% 0px" });
 
   return (
-    <section className="relative z-10 py-16 md:py-24 lg:py-28">
+    <section className="relative z-10 overflow-x-clip py-16 md:py-24 lg:py-28">
       {/* Ambient accents */}
       <div
         aria-hidden

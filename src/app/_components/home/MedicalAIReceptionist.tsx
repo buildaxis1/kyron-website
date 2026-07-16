@@ -1,21 +1,25 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  PhoneCall,
-  CalendarCheck,
-  MessageSquareHeart,
-  AudioLines,
-  Workflow,
-  HeartPulse,
   ArrowRight,
+  AudioLines,
+  CalendarCheck,
+  HeartPulse,
+  MessageSquareHeart,
+  PhoneCall,
   PlayCircle,
+  Workflow,
 } from "lucide-react";
+import Link from "next/link";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" as const },
+  },
 };
 
 const highlights = [
@@ -68,15 +72,14 @@ export default function MedicalAIReceptionist() {
           "radial-gradient(1200px 600px at 0% -10%, rgba(6,182,212,0.10), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(14,165,233,0.10), transparent 50%)",
       }}
     >
-      {/* ambient accents */}
+      {/* ambient accents — clipped so blur never causes horizontal scroll */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -left-16 top-10 h-56 w-56 rounded-full bg-sky-400/15 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-16 bottom-10 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl"
-      />
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+      >
+        <div className="absolute -left-16 top-10 h-56 w-56 rounded-full bg-sky-400/15 blur-3xl" />
+        <div className="absolute -right-16 bottom-10 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl" />
+      </div>
 
       {/* soft grid overlay */}
       <div
@@ -102,13 +105,13 @@ export default function MedicalAIReceptionist() {
             <PhoneCall className="h-3.5 w-3.5 text-sky-500" />
             Medical AI Receptionist
           </span>
-          <h2 className="mb-4 text-balance text-3xl font-bold tracking-[-0.02em] !leading-tight text-foreground sm:text-4xl md:text-5xl">
+          <h2 className="mb-4 text-balance text-3xl font-bold !leading-tight tracking-[-0.02em] text-foreground sm:text-4xl md:text-5xl">
             Your front desk, answered by AI — every call, every time
           </h2>
           <p className="text-base !leading-relaxed text-muted-foreground md:text-lg">
             The Medical AI Receptionist answers patient calls, schedules
-            appointments, and handles routine communication with a natural
-            voice — so your team can focus on the patients in front of them.
+            appointments, and handles routine communication with a natural voice
+            — so your team can focus on the patients in front of them.
           </p>
         </motion.div>
 

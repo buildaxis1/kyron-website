@@ -1,15 +1,15 @@
 "use client";
 
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import menuData from "./menuData";
-import GetStarted from "../ui/started-button";
-import ThemeToggler from "./ThemeToggler";
-import AnchorLink from "../ui/anchor-link";
 import { toast } from "sonner";
-import { ArrowRight } from "lucide-react";
+import AnchorLink from "../ui/anchor-link";
+import GetStarted from "../ui/started-button";
+import menuData from "./menuData";
+import ThemeToggler from "./ThemeToggler";
 
 const ANNOUNCEMENT = {
   text: "HIPAA‑compliant voice AI for patient calls and payer calls.",
@@ -54,13 +54,13 @@ export default function Header() {
   // Close mobile menu when clicking outside and prevent body scroll
   useEffect(() => {
     if (navbarOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'auto';
+      document.body.style.removeProperty("overflow");
     }
 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.removeProperty("overflow");
     };
   }, [navbarOpen]);
   const [hoverIndex, setHoverIndex] = useState<number | null>(null);
@@ -115,7 +115,7 @@ export default function Header() {
       <div
         ref={topbarRef}
         className={`fixed left-0 top-0 z-[100] w-full border-b border-border/20 bg-background/80 backdrop-blur-md transition-all duration-300 ${
-          isStuck ? "shadow-lg border-border/40" : "shadow-sm"
+          isStuck ? "border-border/40 shadow-lg" : "shadow-sm"
         }`}
       >
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-8">
@@ -248,9 +248,9 @@ export default function Header() {
                       menuItem.path.includes("#") ? (
                         <AnchorLink
                           href={menuItem.path}
-                          className={`block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50 ${
+                          className={`block rounded-lg px-3 py-2 text-base font-medium transition-colors hover:bg-muted/50 ${
                             isActive(menuItem.path)
-                              ? "text-[#577DE8] bg-[#577DE8]/10"
+                              ? "bg-[#577DE8]/10 text-[#577DE8]"
                               : "text-foreground"
                           }`}
                           onClick={() => setNavbarOpen(false)}
@@ -260,9 +260,9 @@ export default function Header() {
                       ) : (
                         <Link
                           href={menuItem.path}
-                          className={`block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50 ${
+                          className={`block rounded-lg px-3 py-2 text-base font-medium transition-colors hover:bg-muted/50 ${
                             isActive(menuItem.path)
-                              ? "text-[#577DE8] bg-[#577DE8]/10"
+                              ? "bg-[#577DE8]/10 text-[#577DE8]"
                               : "text-foreground"
                           }`}
                           onClick={() => setNavbarOpen(false)}
@@ -272,18 +272,28 @@ export default function Header() {
                       )
                     ) : (
                       <details className="group">
-                        <summary className="block py-2 px-3 text-base font-medium text-foreground hover:bg-muted/50 rounded-lg cursor-pointer list-none">
+                        <summary className="block cursor-pointer list-none rounded-lg px-3 py-2 text-base font-medium text-foreground hover:bg-muted/50">
                           {menuItem.title}
-                          <svg className="ml-2 inline h-3 w-3 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          <svg
+                            className="ml-2 inline h-3 w-3 transition-transform group-open:rotate-180"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M19 9l-7 7-7-7"
+                            />
                           </svg>
                         </summary>
-                        <div className="mt-1 pl-3 space-y-1">
+                        <div className="mt-1 space-y-1 pl-3">
                           {menuItem.submenu?.map((s) => (
                             <Link
                               key={s.id}
                               href={s.path!}
-                              className={`block py-1.5 px-3 text-sm hover:bg-muted/30 rounded-lg transition-colors ${
+                              className={`block rounded-lg px-3 py-1.5 text-sm transition-colors hover:bg-muted/30 ${
                                 isActive(s.path)
                                   ? "text-[#577DE8]"
                                   : "text-muted-foreground"
@@ -302,12 +312,12 @@ export default function Header() {
             </nav>
 
             {/* Mobile Auth Section */}
-            <div className="border-t border-border/60 pt-6 space-y-4">
+            <div className="space-y-4 border-t border-border/60 pt-6">
               {/* Theme Toggle */}
               <div className="flex justify-center py-2">
                 <ThemeToggler />
               </div>
-              
+
               {/* Actions */}
               <div className="space-y-3">
                 <div className="flex justify-center">

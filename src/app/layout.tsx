@@ -2,14 +2,14 @@ import Footer from "@/app/_components/Footer";
 import Header from "@/app/_components/Header";
 import ScrollToTop from "@/app/_components/ScrollToTop";
 
+import { ourFileRouter } from "@/app/api/uploadthing/core";
+import { Providers } from "@/app/providers";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "node_modules/react-modal-video/css/modal-video.css";
-import "../styles/global.css";
-import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
-import { ourFileRouter } from "@/app/api/uploadthing/core";
-import type { Metadata, Viewport } from "next";
-import { Providers } from "@/app/providers";
+import "../styles/global.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -81,7 +81,7 @@ export default function RootLayout({
       </head>
 
       <body
-        className={`bg-background text-foreground ${inter.className} overflow-x-hidden`}
+        className={`bg-background text-foreground ${inter.className} overflow-x-clip`}
         data-oid="7-n5rze"
         suppressHydrationWarning
       >
@@ -98,7 +98,9 @@ export default function RootLayout({
 
         <Providers data-oid="nfg8hci">
           <Header data-oid="p167ovv" />
-          <main data-oid="vb:hlno">{children}</main>
+          <main className="overflow-x-clip" data-oid="vb:hlno">
+            {children}
+          </main>
           <Footer data-oid="dhf2-14" />
           <ScrollToTop data-oid="lp8rdn3" />
           <div
