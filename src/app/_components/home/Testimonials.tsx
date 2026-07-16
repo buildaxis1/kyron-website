@@ -157,7 +157,7 @@ export default function Testimonials() {
 
       <div className="container">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+          <h2 className="text-balance text-3xl font-bold tracking-[-0.02em] sm:text-4xl md:text-5xl">
             The new way to reclaim time in healthcare
           </h2>
           <p className="mt-3 text-base text-muted-foreground sm:text-lg">
@@ -188,7 +188,7 @@ export default function Testimonials() {
           backgroundImage:
             "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
           backgroundSize: "28px 28px",
-          color: "var(--foreground)",
+          color: "hsl(var(--foreground))",
         }}
       />
     </section>

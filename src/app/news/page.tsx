@@ -38,6 +38,8 @@ const NewsPage = () => {
 
       <div className="container relative">
         <SectionTitle
+          eyebrow="Newsroom"
+          eyebrowDotClass="bg-amber-500"
           title="Latest News"
           paragraph="Stay up to date with the latest news and updates for Kyron!"
           center
@@ -99,7 +101,7 @@ const NewsPage = () => {
           {sortedNewsData.slice(1).map((newsItem) => (
             <div
               key={newsItem.id}
-              className="group relative overflow-hidden rounded-lg md:rounded-xl bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="group relative overflow-hidden rounded-2xl border border-border/60 bg-background/70 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg"
             >
               <div className="aspect-[4/3] md:aspect-[16/9] overflow-hidden">
                 <Image

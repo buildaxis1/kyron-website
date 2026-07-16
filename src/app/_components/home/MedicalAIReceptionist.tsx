@@ -63,6 +63,10 @@ export default function MedicalAIReceptionist() {
       id="ai-receptionist"
       className="relative overflow-hidden py-20 md:py-28"
       data-oid="ai-receptionist"
+      style={{
+        background:
+          "radial-gradient(1200px 600px at 0% -10%, rgba(6,182,212,0.10), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(14,165,233,0.10), transparent 50%)",
+      }}
     >
       {/* ambient accents */}
       <div
@@ -71,7 +75,19 @@ export default function MedicalAIReceptionist() {
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-16 bottom-10 h-56 w-56 rounded-full bg-indigo-400/15 blur-3xl"
+        className="pointer-events-none absolute -right-16 bottom-10 h-56 w-56 rounded-full bg-cyan-400/15 blur-3xl"
+      />
+
+      {/* soft grid overlay */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.04]"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+          color: "hsl(var(--foreground))",
+        }}
       />
 
       <div className="container relative">
@@ -82,11 +98,11 @@ export default function MedicalAIReceptionist() {
           viewport={{ once: true, amount: 0.3 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">
-            <PhoneCall className="h-4 w-4 text-sky-500" />
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+            <PhoneCall className="h-3.5 w-3.5 text-sky-500" />
             Medical AI Receptionist
           </span>
-          <h2 className="mb-4 text-3xl font-bold !leading-tight text-foreground sm:text-4xl md:text-[42px]">
+          <h2 className="mb-4 text-balance text-3xl font-bold tracking-[-0.02em] !leading-tight text-foreground sm:text-4xl md:text-5xl">
             Your front desk, answered by AI — every call, every time
           </h2>
           <p className="text-base !leading-relaxed text-muted-foreground md:text-lg">
@@ -105,9 +121,9 @@ export default function MedicalAIReceptionist() {
               whileInView="show"
               viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: i * 0.05 }}
-              className="group rounded-xl border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              className="group rounded-2xl border border-border/60 bg-background/70 p-6 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg"
             >
-              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-sky-500/10 text-sky-600 transition-colors group-hover:bg-sky-500/20 dark:text-sky-400">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600 transition group-hover:scale-105 dark:text-sky-400">
                 <item.icon className="h-5 w-5" />
               </div>
               <h3 className="mb-2 text-lg font-semibold text-foreground">
@@ -128,7 +144,7 @@ export default function MedicalAIReceptionist() {
           viewport={{ once: true, amount: 0.2 }}
           className="mx-auto mt-14 max-w-4xl"
         >
-          <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-2xl border bg-muted shadow-lg">
+          <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-muted/40 shadow-2xl backdrop-blur">
             <div className="flex flex-col items-center gap-3 text-muted-foreground">
               <PlayCircle className="h-14 w-14 text-sky-500/70" />
               <p className="text-sm font-medium">
@@ -140,7 +156,7 @@ export default function MedicalAIReceptionist() {
           <div className="mt-8 text-center">
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow transition-transform hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_25px_-10px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] hover:bg-blue-800 active:scale-[0.98]"
             >
               See it answer your phones
               <ArrowRight className="h-4 w-4" />

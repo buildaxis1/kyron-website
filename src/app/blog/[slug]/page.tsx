@@ -65,7 +65,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </span>
           </span>
 
-          <h1 className="mb-5 text-3xl font-bold !leading-tight text-foreground sm:text-4xl">
+          <h1 className="mb-5 text-balance text-3xl font-bold tracking-[-0.02em] !leading-tight text-foreground sm:text-4xl">
             {post.title}
           </h1>
 
@@ -105,7 +105,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
 
           {/* CTA */}
-          <div className="mt-12 rounded-2xl border bg-gradient-to-r from-sky-500/10 via-card to-indigo-500/10 p-8 text-center">
+          <div className="mt-12 rounded-2xl border border-border/60 bg-gradient-to-r from-sky-500/10 via-background/70 to-indigo-500/10 p-8 text-center shadow-2xl backdrop-blur">
             <h3 className="mb-2 text-xl font-semibold text-foreground">
               See Kyron Medical in action
             </h3>
@@ -114,7 +114,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </p>
             <Link
               href="/contact"
-              className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow transition-transform hover:scale-[1.02]"
+              className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_25px_-10px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] hover:bg-blue-800 active:scale-[0.98]"
             >
               Request a demo
               <ArrowRight className="h-4 w-4" />
@@ -132,7 +132,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   <Link
                     key={rel.slug}
                     href={`/blog/${rel.slug}`}
-                    className="group rounded-xl border bg-card p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+                    className="group rounded-2xl border border-border/60 bg-background/70 p-5 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg"
                   >
                     <h4 className="mb-2 font-semibold text-foreground group-hover:text-primary">
                       {rel.title}

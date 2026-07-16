@@ -211,7 +211,7 @@ const DashboardPreview = () => {
       </div>
 
       <div className="container relative">
-        <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 lg:grid-cols-2 xl:gap-20">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 lg:grid-cols-[4fr_6fr] xl:gap-16">
           {/* Left copy */}
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-md">
@@ -252,7 +252,7 @@ const DashboardPreview = () => {
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:items-start">
               <Link
                 href="https://kyronmedical.com/contact"
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.35),0_10px_10px_-5px_rgba(0,0,0,0.1)] transition hover:scale-[1.02] hover:bg-blue-800 active:scale-[0.98] sm:px-6 sm:text-base"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_25px_-5px_rgba(0,0,0,0.35),0_10px_10px_-5px_rgba(0,0,0,0.1)] transition hover:scale-[1.02] hover:bg-blue-800 active:scale-[0.98] sm:px-6 sm:text-base"
                 onClick={() =>
                   toast.success("Demo request sent.", {
                     description:
@@ -278,7 +278,7 @@ const DashboardPreview = () => {
                 }
                 href="/templates/EB_Template.xlsx"
                 download
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-background/70 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition hover:scale-[1.02] hover:bg-accent active:scale-[0.98] sm:px-6 sm:text-base"
+                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-border bg-background/70 px-5 py-3 text-sm font-semibold text-foreground backdrop-blur transition hover:scale-[1.02] hover:bg-accent active:scale-[0.98] sm:px-6 sm:text-base"
               >
                 Download sample CSV
                 <Download className="h-4 w-4" />
@@ -375,18 +375,18 @@ const DashboardPreview = () => {
                           description: t,
                         });
                       }}
-                      className={`inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
+                      className={`inline-flex items-center gap-2 whitespace-nowrap rounded-lg border px-3 py-1.5 text-xs font-medium transition ${
                         active === t
                           ? "border-primary/40 bg-primary/10 text-primary"
                           : "border-border/60 bg-muted/40 text-muted-foreground hover:bg-muted/60"
                       }`}
                     >
                       <span
-                        className={`rounded bg-white/70 px-1.5 py-0.5 text-[10px] font-semibold ${headerBadge.tone}`}
-                      >
-                        {t.split(" ")[0]}
-                      </span>
-                      <span className="hidden sm:block">{t}</span>
+                        className={`inline-block h-1.5 w-1.5 rounded-full ${
+                          active === t ? "bg-[#577DE8]" : "bg-muted-foreground/40"
+                        }`}
+                      />
+                      {t}
                     </button>
                   ))}
                 </div>

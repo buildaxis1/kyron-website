@@ -9,7 +9,7 @@ const Offerings = () => {
       data-oid="622xtpr"
       style={{
         background:
-          "radial-gradient(1200px 600px at 0% -10%, rgba(2,132,199,0.10), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(79,70,229,0.10), transparent 50%)",
+          "radial-gradient(1200px 600px at 0% -10%, rgba(245,158,11,0.08), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(244,63,94,0.07), transparent 50%)",
       }}
     >
       {/* Grid background */}
@@ -30,23 +30,23 @@ const Offerings = () => {
           data-oid="xameac6"
         >
           <div
-            className="flex transform flex-col items-start rounded-lg border bg-card p-6 shadow-lg transition-transform hover:scale-105 md:flex-row"
+            className="group flex flex-row items-start gap-4 rounded-2xl border border-border/60 bg-background/70 p-5 text-left shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg sm:p-7 md:gap-6"
             data-oid="9brzfvb"
           >
             <div
-              className="mb-4 flex h-24 w-24 flex-shrink-0 items-center justify-center self-center md:mb-0 md:mr-6 md:h-32 md:w-32 md:self-start"
+              className="flex h-16 w-16 flex-shrink-0 flex-row items-center justify-center sm:h-20 sm:w-20 md:h-28 md:w-28"
               data-oid="4s6_5fh"
             >
               <Orb color="pink" data-oid="q_jp203" />
             </div>
             <div className="min-w-0 flex-1" data-oid=".2wepct">
               <h3
-                className="mb-3 text-lg font-semibold text-foreground md:text-xl"
+                className="mb-2 text-left text-lg font-semibold text-foreground md:text-xl"
                 data-oid="dnikl3a"
               >
                 Eligibility and Benefits
               </h3>
-              <p className="text-left text-foreground" data-oid="dxpufb4">
+              <p className="text-left text-sm leading-relaxed text-muted-foreground md:text-base" data-oid="dxpufb4">
                 <span className="font-bold" data-oid="5oev_b.">
                   Verify coverage instantly.
                 </span>{" "}
@@ -57,23 +57,23 @@ const Offerings = () => {
             </div>
           </div>
           <div
-            className="flex transform flex-col items-start rounded-lg border bg-card p-6 shadow-lg transition-transform hover:scale-105 md:flex-row"
+            className="group flex flex-row items-start gap-4 rounded-2xl border border-border/60 bg-background/70 p-5 text-left shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg sm:p-7 md:gap-6"
             data-oid="xk6lto0"
           >
             <div
-              className="mb-4 flex h-24 w-24 flex-shrink-0 items-center justify-center self-center md:mb-0 md:mr-6 md:h-32 md:w-32 md:self-start"
+              className="flex h-16 w-16 flex-shrink-0 flex-row items-center justify-center sm:h-20 sm:w-20 md:h-28 md:w-28"
               data-oid="77tkvtc"
             >
               <Orb color="green" data-oid="kdapfhf" />
             </div>
             <div className="min-w-0 flex-1" data-oid="2t05_nj">
               <h3
-                className="mb-3 text-lg font-semibold text-foreground md:text-xl"
+                className="mb-2 text-left text-lg font-semibold text-foreground md:text-xl"
                 data-oid="wu8u36s"
               >
                 Claim Status Inquiries
               </h3>
-              <p className="text-left text-foreground" data-oid="0f-rnzn">
+              <p className="text-left text-sm leading-relaxed text-muted-foreground md:text-base" data-oid="0f-rnzn">
                 <span className="font-bold" data-oid="y4imdn.">
                   Get claim updates without the wait.
                 </span>{" "}
@@ -84,23 +84,23 @@ const Offerings = () => {
             </div>
           </div>
           <div
-            className="flex transform flex-col items-start rounded-lg border bg-card p-6 shadow-lg transition-transform hover:scale-105 md:flex-row"
+            className="group flex flex-row items-start gap-4 rounded-2xl border border-border/60 bg-background/70 p-5 text-left shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg sm:p-7 md:gap-6"
             data-oid="pv26-9."
           >
             <div
-              className="mb-4 flex h-24 w-24 flex-shrink-0 items-center justify-center self-center md:mb-0 md:mr-6 md:h-32 md:w-32 md:self-start"
+              className="flex h-16 w-16 flex-shrink-0 flex-row items-center justify-center sm:h-20 sm:w-20 md:h-28 md:w-28"
               data-oid="d8:1zmu"
             >
               <Orb color="pearl" data-oid="y74x91n" />
             </div>
             <div className="min-w-0 flex-1" data-oid="lo0cl:f">
               <h3
-                className="mb-3 text-lg font-semibold text-foreground md:text-xl"
+                className="mb-2 text-left text-lg font-semibold text-foreground md:text-xl"
                 data-oid="kmz-54_"
               >
                 Prior Authorization
               </h3>
-              <p className="text-left text-foreground" data-oid="uboae96">
+              <p className="text-left text-sm leading-relaxed text-muted-foreground md:text-base" data-oid="uboae96">
                 <span className="font-bold" data-oid="4c9ypoi">
                   Faster approvals, fewer delays.
                 </span>{" "}
@@ -111,23 +111,23 @@ const Offerings = () => {
             </div>
           </div>
           <div
-            className="flex transform flex-col items-start rounded-lg border bg-card p-6 shadow-lg transition-transform hover:scale-105 md:flex-row"
+            className="group flex flex-row items-start gap-4 rounded-2xl border border-border/60 bg-background/70 p-5 text-left shadow-sm backdrop-blur transition hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg sm:p-7 md:gap-6"
             data-oid="3-o-3yo"
           >
             <div
-              className="mb-4 flex h-24 w-24 flex-shrink-0 items-center justify-center self-center md:mb-0 md:mr-6 md:h-32 md:w-32 md:self-start"
+              className="flex h-16 w-16 flex-shrink-0 flex-row items-center justify-center sm:h-20 sm:w-20 md:h-28 md:w-28"
               data-oid="8oh-nw3"
             >
               <Orb color="orange" data-oid="uefudfo" />
             </div>
             <div className="min-w-0 flex-1" data-oid="mz2-xfd">
               <h3
-                className="mb-3 text-lg font-semibold text-foreground md:text-xl"
+                className="mb-2 text-left text-lg font-semibold text-foreground md:text-xl"
                 data-oid="kq19-sx"
               >
                 Denial Appeals
               </h3>
-              <p className="text-left text-foreground" data-oid="t9banw6">
+              <p className="text-left text-sm leading-relaxed text-muted-foreground md:text-base" data-oid="t9banw6">
                 <span className="font-bold" data-oid="v552cfl">
                   Recover revenue with precision.
                 </span>{" "}

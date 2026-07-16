@@ -60,8 +60,12 @@ export default function RevenueCycleAI() {
   return (
     <section
       id="rcm-ai"
-      className="relative overflow-hidden bg-muted/50 py-20 md:py-28"
+      className="relative overflow-hidden py-20 md:py-28"
       data-oid="rcm-ai"
+      style={{
+        background:
+          "radial-gradient(1200px 600px at 0% -10%, rgba(99,102,241,0.10), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(168,85,247,0.10), transparent 50%)",
+      }}
     >
       {/* grid backdrop */}
       <div
@@ -83,11 +87,11 @@ export default function RevenueCycleAI() {
           viewport={{ once: true, amount: 0.3 }}
           className="mx-auto max-w-3xl text-center"
         >
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border bg-card px-4 py-1.5 text-sm font-medium text-muted-foreground">
-            <Landmark className="h-4 w-4 text-indigo-500" />
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+            <Landmark className="h-3.5 w-3.5 text-indigo-500" />
             Revenue Cycle Management AI
           </span>
-          <h2 className="mb-4 text-3xl font-bold !leading-tight text-foreground sm:text-4xl md:text-[42px]">
+          <h2 className="mb-4 text-balance text-3xl font-bold tracking-[-0.02em] !leading-tight text-foreground sm:text-4xl md:text-5xl">
             Voice AI that calls payers, so your billing team doesn&apos;t have
             to
           </h2>
@@ -107,9 +111,9 @@ export default function RevenueCycleAI() {
               whileInView="show"
               viewport={{ once: true, amount: 0.2 }}
               transition={{ delay: i * 0.05 }}
-              className="group rounded-xl border bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
+              className="group rounded-2xl border border-border/60 bg-background/70 p-6 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg"
             >
-              <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-600 transition-colors group-hover:bg-indigo-500/20 dark:text-indigo-400">
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600 transition group-hover:scale-105 dark:text-indigo-400">
                 <item.icon className="h-5 w-5" />
               </div>
               <h3 className="mb-2 text-lg font-semibold text-foreground">
@@ -131,7 +135,7 @@ export default function RevenueCycleAI() {
         >
           <Link
             href="/contact"
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow transition-transform hover:scale-[1.02]"
+            className="inline-flex items-center gap-2 rounded-xl bg-blue-700 px-5 py-3 text-sm font-semibold text-white shadow-[0_20px_25px_-10px_rgba(0,0,0,0.35)] transition hover:scale-[1.02] hover:bg-blue-800 active:scale-[0.98]"
           >
             Put voice AI on your payer calls
             <ArrowRight className="h-4 w-4" />

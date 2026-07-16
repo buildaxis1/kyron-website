@@ -36,7 +36,7 @@ const CaseStudies = () => {
             {caseStudiesData.map((caseStudy) => (
               <div
                 key={caseStudy.id}
-                className="group relative overflow-hidden rounded-xl bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-2xl border border-border/60 bg-background/70 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg"
                 data-oid="vygdm0w"
               >
                 {/* pdf file icon */}
@@ -48,13 +48,13 @@ const CaseStudies = () => {
                 </div>
                 <div className="p-6" data-oid="z4igi29">
                   <h3
-                    className="mb-4 line-clamp-1 text-xl font-bold text-gray-900 dark:text-white"
+                    className="mb-4 line-clamp-1 text-xl font-semibold text-foreground"
                     data-oid="-8lim3d"
                   >
                     {caseStudy.title}
                   </h3>
                   <p
-                    className="line-clamp-2 text-lg text-gray-600  dark:text-gray-300"
+                    className="line-clamp-2 text-sm leading-relaxed text-muted-foreground"
                     data-oid="k81aay4"
                   >
                     {caseStudy.description}
@@ -71,7 +71,7 @@ const CaseStudies = () => {
                         });
                         setModalOpen(true);
                       }}
-                      className="inline-block rounded-full bg-blue-500 px-6 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#577DE8] px-5 py-2 text-sm font-semibold text-white transition hover:scale-[1.02] hover:bg-blue-700 active:scale-[0.98]"
                       data-oid=".1.xxs3"
                     >
                       View

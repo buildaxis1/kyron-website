@@ -62,14 +62,21 @@ const Hero: React.FC<Props> = () => {
         className="relative z-10 overflow-hidden"
         style={{
           background: isDark
-            ? "radial-gradient(1200px 600px at 10% -10%, rgba(56,189,248,0.08), transparent 50%), radial-gradient(900px 500px at 90% 10%, rgba(147,51,234,0.10), transparent 50%), linear-gradient(180deg, hsl(222.2 84% 4.9%) 0%, hsl(217.2 32.6% 17.5%) 120%)"
-            : "radial-gradient(1200px 600px at 10% -10%, rgba(2,132,199,0.12), transparent 50%), radial-gradient(900px 500px at 90% 10%, rgba(79,70,229,0.12), transparent 50%), linear-gradient(180deg, #ffffff 0%, hsl(210 40% 96%) 120%)",
+            ? "radial-gradient(1200px 600px at 10% -10%, rgba(56,189,248,0.08), transparent 50%), radial-gradient(900px 500px at 90% 10%, rgba(147,51,234,0.10), transparent 50%), linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted)) 120%)"
+            : "radial-gradient(1200px 600px at 10% -10%, rgba(2,132,199,0.12), transparent 50%), radial-gradient(900px 500px at 90% 10%, rgba(79,70,229,0.12), transparent 50%), linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted)) 120%)",
         }}
       >
         <GridOverlay />
 
+        {/* Fade the section wash back into the page background so the
+            handoff to the next section is seamless (esp. in light mode) */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-background"
+        />
+
         <div className="container relative">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 py-24 md:py-28 lg:grid-cols-[4fr_6fr] xl:gap-16">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-14 py-24 md:py-28 lg:grid-cols-[4fr_6fr] xl:gap-16">
             <div className="relative">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-md">
                 <span className="inline-flex items-center gap-1 text-primary">
@@ -304,7 +311,7 @@ function ShowcasePanel() {
       >
         <motion.div
           style={{ rotateX: rx, rotateY: ry }}
-          className="relative isolate w-full max-w-2xl select-none rounded-2xl border border-border/60 bg-background/70 p-3 shadow-2xl backdrop-blur-lg"
+          className="relative isolate w-full select-none rounded-2xl border border-border/60 bg-background/70 p-3 shadow-2xl backdrop-blur-lg lg:max-w-none"
         >
           <div className="pointer-events-none absolute inset-0 -z-10 rounded-2xl bg-[radial-gradient(600px_200px_at_50%_0%,rgba(59,130,246,0.15),transparent),radial-gradient(400px_200px_at_90%_10%,rgba(147,51,234,0.15),transparent)]" />
 

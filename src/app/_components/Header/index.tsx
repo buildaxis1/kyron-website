@@ -4,35 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useTheme } from "next-themes";
 import menuData from "./menuData";
 import GetStarted from "../ui/started-button";
 import ThemeToggler from "./ThemeToggler";
 import AnchorLink from "../ui/anchor-link";
 import { toast } from "sonner";
-import {
-  BookOpenText,
-  FileText,
-  Newspaper,
-  FolderKanban,
-  Code2,
-  ArrowRight,
-} from "lucide-react";
-
-type SubIconKey =
-  | "Blog"
-  | "Case Studies"
-  | "Whitepapers"
-  | "FAQs"
-  | "For Developers";
-
-const iconFor: Record<SubIconKey, JSX.Element> = {
-  Blog: <Newspaper className="h-4 w-4" />,
-  "Case Studies": <FolderKanban className="h-4 w-4" />,
-  Whitepapers: <FileText className="h-4 w-4" />,
-  FAQs: <BookOpenText className="h-4 w-4" />,
-  "For Developers": <Code2 className="h-4 w-4" />,
-};
+import { ArrowRight } from "lucide-react";
 
 const ANNOUNCEMENT = {
   text: "HIPAA‑compliant denial automation for modern RCM teams.",
@@ -49,25 +26,14 @@ const QUICK_FILTERS = [
 
 export default function Header() {
   const pathname = usePathname();
-  const { theme } = useTheme();
-  const [mounted, setMounted] = useState(false);
 
   // Fixed top bar state
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [isStuck, setIsStuck] = useState(false);
 
-  // Dynamic text colors based on theme (only after mount to prevent hydration issues)
-  const textColor = mounted && theme === 'dark' ? '#FFFFFF' : '#1F2937';
-  const hoverColor = '#577DE8';
-
   // Measure top bar height so we can offset content with a spacer
   const topbarRef = useRef<HTMLDivElement | null>(null);
   const [topbarH, setTopbarH] = useState(80);
-
-  // Set mounted to true after hydration to prevent SSR/client mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     const onScroll = () => setIsStuck(window.scrollY >= 24);
@@ -182,28 +148,25 @@ export default function Header() {
                     menuItem.path.includes("#") ? (
                       <AnchorLink
                         href={menuItem.path}
-                        className="text-[15px] font-medium transition-colors duration-200"
-                        style={{
-                          color: active ? hoverColor : textColor
-                        }}
+                        className={`text-[15px] font-medium transition-colors duration-200 hover:text-[#577DE8] ${
+                          active ? "text-[#577DE8]" : "text-foreground"
+                        }`}
                       >
                         {menuItem.title}
                       </AnchorLink>
                     ) : (
                       <Link
                         href={menuItem.path}
-                        className="text-[15px] font-medium transition-colors duration-200"
-                        style={{
-                          color: active ? hoverColor : textColor
-                        }}
+                        className={`text-[15px] font-medium transition-colors duration-200 hover:text-[#577DE8] ${
+                          active ? "text-[#577DE8]" : "text-foreground"
+                        }`}
                       >
                         {menuItem.title}
                       </Link>
                     )
                   ) : (
                     <button
-                      className="text-[15px] font-medium transition-colors duration-200"
-                      style={{ color: textColor }}
+                      className="flex items-center gap-1 text-[15px] font-medium text-foreground transition-colors duration-200 hover:text-[#577DE8]"
                       onClick={() =>
                         setHoverIndex((v) => (v === index ? null : index))
                       }
@@ -212,45 +175,26 @@ export default function Header() {
                     </button>
                   )}
 
-                  {/* Resources mega menu */}
+                  {/* Resources dropdown (kyron compact style) */}
                   {hasSub && isResources && hoverIndex === index && (
-                    <div 
-                      className="absolute left-1/2 top-[115%] w-[520px] -translate-x-1/2 rounded-2xl border border-border bg-card/95 p-4 shadow-xl backdrop-blur"
+                    <div
+                      className="absolute right-0 top-full w-44 rounded-xl border border-border/60 bg-background p-2 shadow-lg"
                       onMouseEnter={handleDropdownEnter}
                       onMouseLeave={handleDropdownLeave}
                     >
-                      <div className="grid grid-cols-2 gap-3">
-                        {menuItem.submenu!.map((s) => (
-                          <Link
-                            key={s.id}
-                            href={s.path!}
-                            className="group flex items-start gap-3 rounded-lg border border-transparent p-3 transition hover:border-border hover:bg-muted/40"
-                          >
-                            <span className="mt-0.5 text-muted-foreground">
-                              {iconFor[s.title as SubIconKey] ?? (
-                                <FileText className="h-4 w-4" />
-                              )}
-                            </span>
-                            <div>
-                              <p className="text-sm font-medium text-foreground group-hover:text-primary">
-                                {s.title}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {s.title === "Blog" &&
-                                  "Product updates and insights"}
-                                {s.title === "Case Studies" &&
-                                  "Real results from teams like yours"}
-                                {s.title === "Whitepapers" &&
-                                  "Deep dives and best practices"}
-                                {s.title === "FAQs" &&
-                                  "Common questions answered"}
-                                {s.title === "For Developers" &&
-                                  "API keys, webhooks, and docs"}
-                              </p>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
+                      {menuItem.submenu!.map((s) => (
+                        <Link
+                          key={s.id}
+                          href={s.path!}
+                          className={`block rounded-lg px-3 py-2 text-sm transition-colors hover:bg-muted/50 hover:text-primary ${
+                            isActive(s.path)
+                              ? "text-[#577DE8]"
+                              : "text-muted-foreground"
+                          }`}
+                        >
+                          {s.title}
+                        </Link>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -304,11 +248,11 @@ export default function Header() {
                       menuItem.path.includes("#") ? (
                         <AnchorLink
                           href={menuItem.path}
-                          className="block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50"
-                          style={{
-                            color: isActive(menuItem.path) ? hoverColor : textColor,
-                            backgroundColor: isActive(menuItem.path) ? 'rgba(87, 125, 232, 0.1)' : 'transparent'
-                          }}
+                          className={`block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50 ${
+                            isActive(menuItem.path)
+                              ? "text-[#577DE8] bg-[#577DE8]/10"
+                              : "text-foreground"
+                          }`}
                           onClick={() => setNavbarOpen(false)}
                         >
                           {menuItem.title}
@@ -316,11 +260,11 @@ export default function Header() {
                       ) : (
                         <Link
                           href={menuItem.path}
-                          className="block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50"
-                          style={{
-                            color: isActive(menuItem.path) ? hoverColor : textColor,
-                            backgroundColor: isActive(menuItem.path) ? 'rgba(87, 125, 232, 0.1)' : 'transparent'
-                          }}
+                          className={`block py-2 px-3 text-base font-medium rounded-lg transition-colors hover:bg-muted/50 ${
+                            isActive(menuItem.path)
+                              ? "text-[#577DE8] bg-[#577DE8]/10"
+                              : "text-foreground"
+                          }`}
                           onClick={() => setNavbarOpen(false)}
                         >
                           {menuItem.title}
@@ -328,10 +272,7 @@ export default function Header() {
                       )
                     ) : (
                       <details className="group">
-                        <summary 
-                          className="block py-2 px-3 text-base font-medium hover:bg-muted/50 rounded-lg cursor-pointer list-none"
-                          style={{ color: textColor }}
-                        >
+                        <summary className="block py-2 px-3 text-base font-medium text-foreground hover:bg-muted/50 rounded-lg cursor-pointer list-none">
                           {menuItem.title}
                           <svg className="ml-2 inline h-3 w-3 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -342,8 +283,11 @@ export default function Header() {
                             <Link
                               key={s.id}
                               href={s.path!}
-                              className="block py-1.5 px-3 text-sm hover:bg-muted/30 rounded-lg transition-colors"
-                              style={{ color: mounted && theme === 'dark' ? '#D1D5DB' : '#374151' }}
+                              className={`block py-1.5 px-3 text-sm hover:bg-muted/30 rounded-lg transition-colors ${
+                                isActive(s.path)
+                                  ? "text-[#577DE8]"
+                                  : "text-muted-foreground"
+                              }`}
                               onClick={() => setNavbarOpen(false)}
                             >
                               {s.title}

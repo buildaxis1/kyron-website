@@ -13,7 +13,7 @@ import {
   FileText,
   ArrowRight,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // extra icons for the full iPhone UI
 import {
@@ -24,6 +24,7 @@ import {
   UserPlus,
   Grid3X3,
   UserRound,
+  Building2,
 } from "lucide-react";
 
 const DEMO_URL = "https://kyronmedical.com/contact";
@@ -157,7 +158,7 @@ export default function VoiceAIPanel() {
           backgroundImage:
             "linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)",
           backgroundSize: "28px 28px",
-          color: "var(--foreground)",
+          color: "hsl(var(--foreground))",
         }}
       />
     </section>
@@ -188,7 +189,8 @@ function VoiceAIDashboard({
   setCalling: (v: boolean) => void;
 }) {
   return (
-    <div className="space-y-3">
+    // Right padding on sm+ keeps content clear of the overlaid iPhone mockup
+    <div className="space-y-3 sm:pr-20 md:pr-32">
       {/* top tabs */}
       <div className="flex flex-wrap gap-2">
         {["Details", "Appeals", "Eligibility & Benefits", "Claim Status"].map(
@@ -248,7 +250,7 @@ function VoiceAIDashboard({
 
       {/* call state */}
       <div className={`rounded-xl border border-border/60 bg-background/80 p-4 ${
-        calling ? 'ring-1 ring-emerald-500/20 bg-emerald-50/30 dark:bg-emerald-950/20' : ''
+        calling ? 'ring-1 ring-emerald-500/20 bg-emerald-500/5' : ''
       }`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -311,101 +313,105 @@ function VoiceAIDashboard({
 /* ---------------- iPhone call screen ---------------- */
 
 function IPhoneCallScreen() {
-  // A fuller, device‑style iPhone (14/15) call UI built with Tailwind.
-  // Pure CSS/React — no images required.
+  // Kyron design language — device-style iPhone call UI with a live caller
+  // block, waveform, and full call-controls grid. Pure CSS/React.
+  const [seconds, setSeconds] = useState(46);
+  useEffect(() => {
+    const tick = setInterval(() => setSeconds((s) => s + 1), 1000);
+    return () => clearInterval(tick);
+  }, []);
+  const ss = String(seconds % 60).padStart(2, "0");
+  const mm = String(Math.floor(seconds / 60)).padStart(2, "0");
+
   return (
-    <div
-      className="
-        relative h-[320px] w-[180px] sm:h-[400px] sm:w-[220px] md:h-[512px] md:w-[270px]
-        rounded-[28px] sm:rounded-[35px] md:rounded-[42px] border border-white/15 bg-neutral-950/95 p-1 sm:p-1.5 md:p-2 text-white
-        shadow-2xl ring-1 ring-black/40 backdrop-blur
-      "
-    >
-      {/* Side buttons (decorative) */}
-      <div
-        className="absolute left-[-3px] top-24 h-10 w-1 rounded-full bg-black/60"
-        aria-hidden
-      />
-      <div
-        className="absolute left-[-3px] top-40 h-8 w-1 rounded-full bg-black/60"
-        aria-hidden
-      />
-      <div
-        className="absolute right-[-3px] top-12 h-16 w-1 rounded-full bg-black/60"
-        aria-hidden
-      />
+    <div className="animate-float relative h-[340px] w-[186px] rounded-[36px] border-[3px] border-neutral-800 bg-neutral-950 p-1.5 text-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.6)] ring-1 ring-white/5 sm:h-[420px] sm:w-[228px] sm:rounded-[44px] md:h-[520px] md:w-[276px] md:rounded-[52px]">
+      {/* side buttons */}
+      <div className="absolute left-[-4px] top-24 h-8 w-1 rounded-l bg-neutral-700" aria-hidden />
+      <div className="absolute left-[-4px] top-36 h-12 w-1 rounded-l bg-neutral-700" aria-hidden />
+      <div className="absolute left-[-4px] top-52 h-12 w-1 rounded-l bg-neutral-700" aria-hidden />
+      <div className="absolute right-[-4px] top-32 h-16 w-1 rounded-r bg-neutral-700" aria-hidden />
 
-      {/* Screen content */}
-      <div className="flex h-full flex-col rounded-[24px] sm:rounded-[30px] md:rounded-[38px] border border-white/10 bg-neutral-900 px-1.5 sm:px-2.5 md:px-4 pb-1.5 sm:pb-2.5 md:pb-4 pt-2.5 sm:pt-3.5 md:pt-6 shadow-inner">
+      {/* screen */}
+      <div className="relative flex h-full flex-col overflow-hidden rounded-[30px] bg-gradient-to-b from-neutral-800 via-neutral-900 to-black px-4 pb-5 pt-3 sm:rounded-[38px] md:rounded-[46px]">
+        {/* Dynamic Island */}
+        <div
+          className="absolute left-1/2 top-2.5 h-4 w-16 -translate-x-1/2 rounded-full bg-black sm:h-5 sm:w-20"
+          aria-hidden
+        />
+
         {/* Status bar */}
-        <div className="mb-2 sm:mb-3 md:mb-4 flex items-center justify-between text-[10px] sm:text-xs text-neutral-400">
+        <div className="flex items-center justify-between pt-1 text-[10px] font-medium text-neutral-300 sm:text-xs">
+          <span>9:41</span>
           <div className="flex items-center gap-1">
-            <motion.div
-              animate={{
-                opacity: [0.6, 1, 0.6],
-              }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="h-1 w-1 rounded-full bg-emerald-400"
+            <SignalHigh className="h-3 w-3" />
+            <Wifi className="h-3 w-3" />
+            <BatteryFull className="h-3.5 w-3.5" />
+          </div>
+        </div>
+
+        {/* Caller */}
+        <div className="mt-6 flex flex-col items-center text-center sm:mt-9">
+          <span className="mb-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-2.5 py-1 text-[9px] font-medium text-emerald-300 sm:text-[10px]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-400" />
+            Verifying eligibility
+          </span>
+          <div className="relative">
+            <span className="absolute inset-0 animate-ping rounded-full bg-[#577DE8]/30" />
+            <span className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-[#577DE8] to-blue-600 shadow-lg sm:h-16 sm:w-16">
+              <Building2 className="h-6 w-6 text-white sm:h-7 sm:w-7" />
+            </span>
+          </div>
+          <div className="mt-3 text-sm font-semibold sm:text-base">
+            Anthem Blue Cross
+          </div>
+          <div className="mt-0.5 font-mono text-xs tracking-wider text-neutral-400 sm:text-sm">
+            +1 (934) 758-2621
+          </div>
+          <div className="mt-1 font-mono text-[11px] text-emerald-400 sm:text-xs">
+            {mm}:{ss}
+          </div>
+        </div>
+
+        {/* Waveform */}
+        <div
+          className="mt-5 flex h-8 items-center justify-center gap-1"
+          aria-hidden
+        >
+          {[0.4, 0.7, 1, 0.5, 0.85, 0.35, 0.9, 0.55, 0.75, 0.45].map((h, i) => (
+            <span
+              key={i}
+              className="wave-bar w-1 rounded-full bg-[#577DE8]/70"
+              style={{ height: `${h * 100}%`, animationDelay: `${i * 0.1}s` }}
             />
-            <span>9:41</span>
-          </div>
-          <div className="flex items-center gap-0.5 sm:gap-1">
-            <SignalHigh className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-            <Wifi className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-            <BatteryFull className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
-          </div>
+          ))}
         </div>
 
-        {/* Call info */}
-        <div className="flex flex-col items-center text-center">
-          <div className="mb-1 text-[10px] sm:text-[11px] text-neutral-400">00:46</div>
-          <div className="mb-1 text-base sm:text-lg font-semibold tracking-wider">+1 (934) 758-2621</div>
-          <div className="text-[9px] sm:text-[10px] text-neutral-500 font-medium">Anthem Blue Cross</div>
-        </div>
-
-        <div className="flex h-[120px] sm:h-[180px] md:h-[256px] flex-col items-center text-center">
-          <p></p>
-        </div>
-
-        {/* Call controls */}
-        <div className="grid grid-cols-3 gap-1.5 sm:gap-2.5 md:gap-3 text-[7px] sm:text-[8px] md:text-[9px]">
-          <div className="flex flex-col items-center gap-0.5 sm:gap-0.5 md:gap-1">
-            <div className="rounded-full bg-neutral-800 p-1 sm:p-1.5 md:p-2">
-              <Mic className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3" />
-            </div>
-            <span>Mute</span>
+        {/* Controls */}
+        <div className="mt-auto space-y-3 sm:space-y-4">
+          <div className="grid grid-cols-3 gap-y-3 text-[9px] text-neutral-300 sm:gap-y-4 sm:text-[10px]">
+            {[
+              { icon: <Mic className="h-4 w-4 sm:h-5 sm:w-5" />, label: "Mute" },
+              { icon: <Grid3X3 className="h-4 w-4 sm:h-5 sm:w-5" />, label: "Keypad" },
+              { icon: <Volume2 className="h-4 w-4 sm:h-5 sm:w-5" />, label: "Speaker" },
+              { icon: <UserPlus className="h-4 w-4 sm:h-5 sm:w-5" />, label: "Add Call" },
+              { icon: <Video className="h-4 w-4 sm:h-5 sm:w-5" />, label: "Video" },
+              { icon: <UserRound className="h-4 w-4 sm:h-5 sm:w-5" />, label: "Contacts" },
+            ].map((c) => (
+              <div key={c.label} className="flex flex-col items-center gap-1.5">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 backdrop-blur transition hover:bg-white/20 sm:h-12 sm:w-12">
+                  {c.icon}
+                </span>
+                <span>{c.label}</span>
+              </div>
+            ))}
           </div>
-          <div className="flex flex-col items-center gap-0.5 sm:gap-0.5 md:gap-1">
-            <div className="rounded-full bg-neutral-800 p-1 sm:p-1.5 md:p-2">
-              <Volume2 className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3" />
-            </div>
-            <span>Speaker</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5 sm:gap-0.5 md:gap-1">
-            <div className="rounded-full bg-rose-600 p-1 sm:p-1.5 md:p-2">
-              <PhoneOff className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3" />
-            </div>
-            <span>End</span>
-          </div>
-        </div>
-
-        {/* Additional options */}
-        <div className="mt-1.5 sm:mt-2 md:mt-3 flex justify-center gap-2.5 sm:gap-3 md:gap-4 text-[7px] sm:text-[8px] md:text-[9px]">
-          <div className="flex flex-col items-center gap-0.5">
-            <Video className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 text-neutral-400" />
-            <span className="text-neutral-500">Video</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5">
-            <UserPlus className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 text-neutral-400" />
-            <span className="text-neutral-500">Add Call</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5">
-            <Grid3X3 className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 text-neutral-400" />
-            <span className="text-neutral-500">Keypad</span>
+          <div className="flex justify-center">
+            <button
+              aria-label="End call"
+              className="flex h-11 w-11 items-center justify-center rounded-full bg-red-500 shadow-lg shadow-red-500/40 transition hover:bg-red-600 sm:h-14 sm:w-14"
+            >
+              <PhoneOff className="h-5 w-5 sm:h-6 sm:w-6" />
+            </button>
           </div>
         </div>
       </div>

@@ -37,7 +37,7 @@ export default function HowItWorksOrganized() {
       className="relative overflow-hidden py-20 md:py-28"
       style={{
         background:
-          "radial-gradient(1200px 600px at 0% -10%, rgba(2,132,199,0.10), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(79,70,229,0.10), transparent 50%)",
+          "radial-gradient(1200px 600px at 0% -10%, rgba(217,70,239,0.08), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(79,70,229,0.10), transparent 50%)",
       }}
     >
       {/* Grid background */}

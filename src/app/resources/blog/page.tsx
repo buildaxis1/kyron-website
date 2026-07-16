@@ -53,7 +53,7 @@ const Blog = () => {
             {blogData.map((blog) => (
               <div
                 key={blog.id}
-                className="group relative overflow-hidden rounded-xl bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="group relative overflow-hidden rounded-2xl border border-border/60 bg-background/70 shadow-sm backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-[#577DE8]/40 hover:shadow-lg"
                 data-oid="cbbrc8v"
               >
                 {/* pdf file icon */}
@@ -102,7 +102,7 @@ const Blog = () => {
                         });
                         setModalOpen(true);
                       }}
-                      className="inline-block rounded-full bg-blue-500 px-6 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#577DE8] px-5 py-2 text-sm font-semibold text-white transition hover:scale-[1.02] hover:bg-blue-700 active:scale-[0.98]"
                       data-oid="9yoh44z"
                     >
                       View

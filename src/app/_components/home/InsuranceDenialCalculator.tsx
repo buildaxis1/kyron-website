@@ -1,19 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Card, CardContent } from "../ui/shadui/card";
-import { Label } from "../ui/shadui/label";
-import { ChevronDown } from "lucide-react";
-import { Input } from "../ui/shadui/input";
-import { Button } from "../ui/shadui/button";
 import {
-  Calculator,
-  Users,
+  ArrowRight,
+  ChevronDown,
   DollarSign,
-  Stethoscope,
   MapPin,
-  Mail,
-  Calendar,
+  Stethoscope,
+  TrendingDown,
+  TrendingUp,
+  Users,
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -130,32 +126,112 @@ const revenueRanges = [
   { label: "> $50M", value: 75000000 },
 ];
 
+const practiceSizeOptions = [
+  { value: "1-5", label: "1-5 providers" },
+  { value: "6-10", label: "6-10 providers" },
+  { value: "11-25", label: "11-25 providers" },
+  { value: "26-50", label: "26-50 providers" },
+  { value: "51-100", label: "51-100 providers" },
+  { value: "100+", label: "100+ providers" },
+];
+
+type DropdownKey = "practice" | "revenue" | "specialty" | "state";
+
+type DropdownProps = {
+  id: DropdownKey;
+  icon: React.ReactNode;
+  label: string;
+  placeholder: string;
+  options: { value: string; label: string }[];
+  value: string;
+  display: string;
+  openDropdown: DropdownKey | null;
+  setOpenDropdown: (k: DropdownKey | null) => void;
+  onChange: (value: string) => void;
+};
+
+function Dropdown({
+  id,
+  icon,
+  label,
+  placeholder,
+  options,
+  value,
+  display,
+  openDropdown,
+  setOpenDropdown,
+  onChange,
+}: DropdownProps) {
+  const open = openDropdown === id;
+  return (
+    <div>
+      <label className="mb-2 flex items-center gap-2 text-sm font-medium text-foreground">
+        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#577DE8]/10 text-[#577DE8]">
+          {icon}
+        </span>
+        {label}
+      </label>
+      <div className="relative">
+        <button
+          type="button"
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpenDropdown(open ? null : id);
+          }}
+          className="flex min-h-[48px] w-full items-center justify-between rounded-xl border border-border/60 bg-background px-4 py-3 text-left text-sm transition focus:border-[#577DE8] focus:outline-none focus:ring-2 focus:ring-[#577DE8]/20"
+        >
+          <span className={value ? "text-foreground" : "text-muted-foreground"}>
+            {value ? display : placeholder}
+          </span>
+          <ChevronDown
+            className={`h-4 w-4 text-muted-foreground transition-transform ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        </button>
+        {open && (
+          <ul
+            role="listbox"
+            className="absolute z-20 mt-1 max-h-60 w-full overflow-auto rounded-xl border border-border bg-background py-1 shadow-lg"
+          >
+            {options.map((o) => (
+              <li
+                key={o.value}
+                role="option"
+                aria-selected={o.value === value}
+                onMouseDown={() => {
+                  onChange(o.value);
+                  setOpenDropdown(null);
+                }}
+                className={`cursor-pointer px-4 py-2 text-sm transition hover:bg-[#577DE8]/10 ${
+                  o.value === value
+                    ? "bg-[#577DE8]/10 font-medium text-[#577DE8]"
+                    : "text-foreground"
+                }`}
+              >
+                {o.label}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
+  );
+}
+
 const InsuranceDenialCalculator = () => {
   const [practiceSize, setPracticeSize] = useState("");
   const [annualRevenue, setAnnualRevenue] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [state, setState] = useState("");
   const [email, setEmail] = useState("");
-  const [estimatedLoss, setEstimatedLoss] = useState<number>(0);
+  const [estimatedLoss, setEstimatedLoss] = useState<number>(-1);
   // Dropdown state - only one dropdown open at a time
-  const [openDropdown, setOpenDropdown] = useState<
-    "practice" | "revenue" | "specialty" | "state" | null
-  >(null);
+  const [openDropdown, setOpenDropdown] = useState<DropdownKey | null>(null);
   // root ref to detect outside clicks for closing dropdowns
   const rootRef = useRef<HTMLElement | null>(null);
-  // hover state to toggle grid/hover visuals
-  const [hovered, setHovered] = useState(false);
-
-  const cardStyle: React.CSSProperties = {
-    transition: "transform 220ms ease, box-shadow 220ms ease, background-color 220ms ease",
-    backgroundImage: hovered
-      ? "linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)), repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px)"
-      : "repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 40px)",
-    backgroundSize: hovered ? "auto, 36px 36px, 36px 36px" : "36px 36px, 36px 36px",
-    transform: hovered ? "translateY(-4px) scale(1.01)" : undefined,
-    boxShadow: hovered ? "0 20px 50px rgba(2,6,23,0.6)" : undefined,
-    borderRadius: 12,
-  };
 
   // Close dropdowns when clicking outside or pressing Escape
   useEffect(() => {
@@ -221,16 +297,31 @@ const InsuranceDenialCalculator = () => {
     // Add demo request logic here
   };
 
-  const kyronSavings = estimatedLoss ? estimatedLoss * 0.75 : 0;
+  const hasResult = estimatedLoss >= 0;
+  const kyronSavings = hasResult ? estimatedLoss * 0.75 : 0;
+
+  const combinedDenialRate =
+    typeof specialtyDenialRates[specialty] === "number" &&
+    typeof stateDenialRates[state] === "number"
+      ? (
+          (specialtyDenialRates[specialty] + stateDenialRates[state]) /
+          2
+        ).toFixed(1)
+      : typeof stateDenialRates[state] === "number"
+        ? stateDenialRates[state].toFixed(1)
+        : null;
+
+  const revenueLabel =
+    revenueRanges.find((r) => String(r.value) === annualRevenue)?.label ?? null;
 
   return (
-    <section 
-      ref={rootRef} 
-      className="relative overflow-hidden py-20 md:py-28 text-center" 
+    <section
+      ref={rootRef}
+      className="relative overflow-hidden py-20 md:py-28"
       data-oid="3dpd4k_"
       style={{
         background:
-          "radial-gradient(1200px 600px at 0% -10%, rgba(2,132,199,0.10), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(79,70,229,0.10), transparent 50%)",
+          "radial-gradient(1200px 600px at 0% -10%, rgba(16,185,129,0.09), transparent 50%), radial-gradient(900px 500px at 100% 10%, rgba(2,132,199,0.09), transparent 50%)",
       }}
     >
       {/* soft grid */}
@@ -245,559 +336,169 @@ const InsuranceDenialCalculator = () => {
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(120,120,120,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(120,120,120,0.10)_1px,transparent_1px)] bg-[size:32px_32px]" />
       </div>
 
-      <div className="container relative" data-oid="-2lah8z">
-        <div
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          style={cardStyle}
-          className="mx-4 mx-auto max-w-4xl overflow-visible rounded-lg bg-card shadow-lg"
-          data-oid="g7ke15g"
-        >
-          {/* Header with gradient */}
-          <div
-            className="relative overflow-hidden rounded-t-lg bg-gradient-to-r
-                       from-blue-600 to-blue-400 px-4 py-6 text-center
-                       md:px-6 md:py-8"
-            data-oid="o5wqj3h"
-          >
-            {/* Corner accents */}
-            <div
-              className="absolute left-0 top-0 h-20 w-20 -translate-x-10
-                         -translate-y-10 rotate-45 transform bg-blue-600
-                         opacity-20"
-              data-oid="cudq-ql"
-            />
-            <div
-              className="absolute right-0 top-0 h-20 w-20 -translate-y-10
-                         translate-x-10 rotate-45 transform bg-blue-600
-                         opacity-20"
-              data-oid="pg-hle2"
-            />
+      <div className="container relative">
+        <div className="mx-auto max-w-3xl text-center">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-amber-500" />
+            ROI Calculator
+          </div>
+          <h2 className="mt-3 text-balance text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-4xl md:text-5xl">
+            Calculate your revenue recovery potential
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
+            See how much denied-claim revenue Kyron Medical could help you
+            recover.
+          </p>
+        </div>
 
-            <h1
-              className="mx-auto max-w-2xl text-lg font-semibold text-white tracking-tight md:text-2xl lg:text-3xl"
-              data-oid="16.:fkh"
-            >
-              Calculate Your Revenue Recovery Potential
-              <br data-oid=":zxgn3v" />
-              with Kyron Medical
-            </h1>
+        <div className="mx-auto mt-14 grid max-w-5xl items-stretch gap-6 lg:grid-cols-2">
+          {/* Inputs */}
+          <div className="rounded-3xl border border-border/60 bg-background/70 p-6 shadow-sm backdrop-blur sm:p-8">
+            <h3 className="text-lg font-semibold text-foreground">
+              Tell us about your practice
+            </h3>
+            <div className="mt-6 space-y-5">
+              <Dropdown
+                id="practice"
+                icon={<Users className="h-4 w-4" />}
+                label="Practice Size"
+                placeholder="Select practice size..."
+                options={practiceSizeOptions}
+                value={practiceSize}
+                display={`${practiceSize} providers`}
+                openDropdown={openDropdown}
+                setOpenDropdown={setOpenDropdown}
+                onChange={setPracticeSize}
+              />
+              <Dropdown
+                id="revenue"
+                icon={<DollarSign className="h-4 w-4" />}
+                label="Annual Revenue"
+                placeholder="Select annual revenue..."
+                options={revenueRanges.map((r) => ({
+                  value: String(r.value),
+                  label: r.label,
+                }))}
+                value={annualRevenue}
+                display={revenueLabel ?? ""}
+                openDropdown={openDropdown}
+                setOpenDropdown={setOpenDropdown}
+                onChange={setAnnualRevenue}
+              />
+              <Dropdown
+                id="specialty"
+                icon={<Stethoscope className="h-4 w-4" />}
+                label="Medical Specialty"
+                placeholder="Select specialty..."
+                options={Object.keys(specialtyDenialRates).map((s) => ({
+                  value: s,
+                  label: s,
+                }))}
+                value={specialty}
+                display={specialty}
+                openDropdown={openDropdown}
+                setOpenDropdown={setOpenDropdown}
+                onChange={setSpecialty}
+              />
+              <Dropdown
+                id="state"
+                icon={<MapPin className="h-4 w-4" />}
+                label="State"
+                placeholder="Select state..."
+                options={Object.keys(stateDenialRates).map((s) => ({
+                  value: s,
+                  label: s,
+                }))}
+                value={state}
+                display={state}
+                openDropdown={openDropdown}
+                setOpenDropdown={setOpenDropdown}
+                onChange={setState}
+              />
+            </div>
           </div>
 
-          <div className="overflow-visible p-6" data-oid="257abdn">
-            <div
-              className="grid grid-cols-1 gap-6 md:grid-cols-2"
-              data-oid="-rue369"
-            >
-              {/* Practice Size */}
-              <div className="space-y-3" data-oid="ua52m0g">
-                <div className="flex items-center gap-3" data-oid="48q4fq6">
-                  <div
-                    className="rounded-full bg-blue-500/10 p-2"
-                    data-oid="4xm1frq"
-                  >
-                    <Users
-                      className="h-4 w-4 text-blue-500"
-                      data-oid="3p_sfl9"
-                    />
-                  </div>
-                  <Label
-                    className="text-sm font-medium text-foreground"
-                    data-oid="2yshk39"
-                  >
-                    Practice Size
-                  </Label>
+          {/* Results */}
+          <div className="flex flex-col gap-4 rounded-3xl border border-border/60 bg-gradient-to-br from-[#577DE8] to-blue-500 p-6 text-white shadow-lg sm:p-8">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl bg-white/10 p-5 backdrop-blur">
+                <div className="flex items-center gap-2 text-xs font-medium text-blue-100">
+                  <TrendingDown className="h-4 w-4" />
+                  Lost to denials / yr
                 </div>
+                <div className="mt-2 text-3xl font-bold">
+                  {hasResult ? formatCurrency(estimatedLoss) : "$0"}
+                </div>
+              </div>
+              <div className="rounded-2xl bg-white/15 p-5 ring-1 ring-white/30 backdrop-blur">
+                <div className="flex items-center gap-2 text-xs font-medium text-emerald-100">
+                  <TrendingUp className="h-4 w-4" />
+                  Recoverable with Kyron
+                </div>
+                <div className="mt-2 text-3xl font-bold text-white">
+                  {hasResult ? formatCurrency(kyronSavings) : "$0"}
+                </div>
+                <div className="mt-1 text-[11px] text-blue-100">
+                  Based on 75% recovery
+                </div>
+              </div>
+            </div>
 
-                {/* Custom Practice Size Dropdown */}
-                <div
-                  className="relative"
-                  data-oid="35_v5.3"
-                  data-dropdown
+            <div className="rounded-2xl bg-white/10 p-5 text-sm backdrop-blur">
+              <div className="flex justify-between border-b border-white/15 py-1.5">
+                <span className="text-blue-100">Annual Revenue</span>
+                <span className="font-medium">{revenueLabel ?? "—"}</span>
+              </div>
+              <div className="flex justify-between border-b border-white/15 py-1.5">
+                <span className="text-blue-100">Practice Size</span>
+                <span className="font-medium">
+                  {practiceSize ? `${practiceSize} providers` : "—"}
+                </span>
+              </div>
+              <div className="flex justify-between border-b border-white/15 py-1.5">
+                <span className="text-blue-100">Billing Rate</span>
+                <span className="font-medium">97%</span>
+              </div>
+              <div className="flex justify-between py-1.5">
+                <span className="text-blue-100">Combined Denial Rate</span>
+                <span className="font-medium">
+                  {combinedDenialRate !== null
+                    ? `${combinedDenialRate}%`
+                    : "N/A"}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-auto rounded-2xl bg-white/10 p-5 backdrop-blur">
+              <h3 className="text-base font-semibold">
+                Get started with Kyron Medical
+              </h3>
+              <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  aria-label="Enter your email address"
+                  placeholder="Enter your email address"
+                  className="h-11 flex-1 rounded-xl border border-white/30 bg-white/90 px-4 text-sm text-gray-900 outline-none placeholder:text-gray-500 focus:ring-2 focus:ring-white"
+                />
+                <button
+                  onClick={handleDemoRequest}
+                  aria-label="Request Demo"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-white px-5 text-sm font-semibold text-[#577DE8] transition hover:bg-blue-50"
                 >
-                  <button
-                    onClick={() =>
-                      setOpenDropdown((o) => (o === "practice" ? null : "practice"))
-                    }
-                    aria-haspopup="listbox"
-                    aria-expanded={openDropdown === "practice"}
-                    aria-controls="practice-list"
-                    className="flex min-h-[48px] w-full items-center justify-between border border-blue-500/20 bg-background px-4 py-3 text-left leading-normal focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                    data-oid="n67wje-"
-                  >
-                    <span className="flex-1 text-left text-muted-foreground" data-oid="g:h14ij">
-                      {practiceSize ? `${practiceSize} providers` : "Select practice size..."}
-                    </span>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </button>
-
-                  {openDropdown === "practice" && (
-                    <div id="practice-list" role="listbox" className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-background shadow-lg">
-                      <div className="max-h-60 overflow-auto p-1">
-                        {[
-                          { value: "1-5", label: "1-5 providers" },
-                          { value: "6-10", label: "6-10 providers" },
-                          { value: "11-25", label: "11-25 providers" },
-                          { value: "26-50", label: "26-50 providers" },
-                          { value: "51-100", label: "51-100 providers" },
-                          { value: "100+", label: "100+ providers" },
-                        ].map((option) => (
-                          <button
-                            key={option.value}
-                            onClick={() => {
-                              setPracticeSize(option.value);
-                              setOpenDropdown(null);
-                            }}
-                            role="option"
-                            aria-selected={practiceSize === option.value}
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                setPracticeSize(option.value);
-                                setOpenDropdown(null);
-                              }
-                            }}
-                            className="w-full px-3 py-3 text-left text-sm leading-relaxed text-foreground hover:bg-muted/50 focus:bg-muted/50 focus:outline-none"
-                            data-oid={`practice-${option.value}`}
-                          >
-                            {option.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                  Request Demo
+                  <ArrowRight className="h-4 w-4" />
+                </button>
               </div>
-
-              {/* Annual Revenue */}
-              <div className="space-y-3" data-oid="6_klztk">
-                <div className="flex items-center gap-3" data-oid="v:cjlg_">
-                  <div
-                    className="rounded-full  bg-blue-500/10 p-2"
-                    data-oid="xe8wu1o"
-                  >
-                    <DollarSign
-                      className="h-4 w-4 text-blue-500"
-                      data-oid="tp0hnhg"
-                    />
-                  </div>
-                  <Label
-                    className="text-sm font-medium text-foreground"
-                    data-oid="17vp.br"
-                  >
-                    Annual Revenue
-                  </Label>
-                </div>
-
-                {/* Custom Annual Revenue Dropdown */}
-                <div className="relative" data-oid="_z.u6-d" data-dropdown>
-                  <button
-                    onClick={() => setOpenDropdown((o) => (o === "revenue" ? null : "revenue"))}
-                    aria-haspopup="listbox"
-                    aria-expanded={openDropdown === "revenue"}
-                    aria-controls="revenue-list"
-                    className="flex min-h-[48px] w-full items-center justify-between border border-blue-500/20 bg-background px-4 py-3 text-left leading-normal focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                    data-oid="c18kke3"
-                  >
-                    <span className="flex-1 text-left text-muted-foreground" data-oid="l3qsl9z">
-                      {annualRevenue
-                        ? revenueRanges.find((r) => r.value.toString() === annualRevenue)?.label
-                        : "Select annual revenue..."}
-                    </span>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </button>
-
-                  {openDropdown === "revenue" && (
-                    <div id="revenue-list" role="listbox" className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-background shadow-lg">
-                      <div className="max-h-60 overflow-auto p-1">
-                        {revenueRanges.map((range, index) => (
-                          <button
-                            key={index}
-                            onClick={() => {
-                              setAnnualRevenue(range.value.toString());
-                              setOpenDropdown(null);
-                            }}
-                            role="option"
-                            aria-selected={annualRevenue === range.value.toString()}
-                            tabIndex={0}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                setAnnualRevenue(range.value.toString());
-                                setOpenDropdown(null);
-                              }
-                            }}
-                            className="w-full px-3 py-3 text-left text-sm leading-relaxed hover:bg-muted/50 focus:bg-muted/50 focus:outline-none"
-                            data-oid="hoqt2w8"
-                          >
-                            {range.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Medical Specialty */}
-              <div className="space-y-3" data-oid="inb8by_">
-                <div className="flex items-center gap-3" data-oid="zi7oiq6">
-                  <div
-                    className="rounded-full  bg-blue-500/10  p-2"
-                    data-oid="11-ioqr"
-                  >
-                    <Stethoscope
-                      className="h-4 w-4 text-blue-500"
-                      data-oid="8erbmqr"
-                    />
-                  </div>
-                  <Label
-                    className="text-sm font-medium text-foreground"
-                    data-oid="u9p5hmg"
-                  >
-                    Medical Specialty
-                  </Label>
-                </div>
-
-                {/* Custom Medical Specialty Dropdown */}
-                <div className="relative" data-oid="e-y2lob" data-dropdown>
-                  <button
-                    onClick={() => setOpenDropdown((o) => (o === "specialty" ? null : "specialty"))}
-                    aria-haspopup="listbox"
-                    aria-expanded={openDropdown === "specialty"}
-                    aria-controls="specialty-list"
-                    className="flex min-h-[48px] w-full items-center justify-between border border-blue-500/20 bg-background px-4 py-3 text-left leading-normal focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                    data-oid="rg5vg2i"
-                  >
-                    <span className="flex-1 text-left text-muted-foreground" data-oid="rpiun4_">
-                      {specialty || "Select specialty..."}
-                    </span>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </button>
-
-                  {openDropdown === "specialty" && (
-                    <div id="specialty-list" role="listbox" className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-background shadow-lg">
-                      <div className="max-h-60 overflow-auto p-1">
-                        {Object.keys(specialtyDenialRates)
-                          .sort()
-                          .map((spec) => (
-                            <button
-                              key={spec}
-                              onClick={() => {
-                                setSpecialty(spec);
-                                setOpenDropdown(null);
-                              }}
-                              role="option"
-                              aria-selected={specialty === spec}
-                              tabIndex={0}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                  setSpecialty(spec);
-                                  setOpenDropdown(null);
-                                }
-                              }}
-                              className="w-full px-3 py-3 text-left text-sm leading-relaxed hover:bg-muted/50 focus:bg-muted/50 focus:outline-none"
-                              data-oid="wkvutrz"
-                            >
-                              {spec}
-                            </button>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* State */}
-              <div className="space-y-3" data-oid="-aa2.7r">
-                <div className="flex items-center gap-3" data-oid="m8mou-_">
-                  <div
-                    className="rounded-full bg-blue-500/10 p-2"
-                    data-oid="qs:s0yn"
-                  >
-                    <MapPin
-                      className="h-4 w-4 text-blue-500"
-                      data-oid="sj4avss"
-                    />
-                  </div>
-                  <Label
-                    className="text-sm font-medium text-foreground"
-                    data-oid="xe4u695"
-                  >
-                    State
-                  </Label>
-                </div>
-
-                {/* Custom State Dropdown */}
-                <div className="relative" data-oid="laljx3h" data-dropdown>
-                  <button
-                    onClick={() => setOpenDropdown((o) => (o === "state" ? null : "state"))}
-                    aria-haspopup="listbox"
-                    aria-expanded={openDropdown === "state"}
-                    aria-controls="state-list"
-                    className="flex min-h-[48px] w-full items-center justify-between border border-blue-500/20 bg-background px-4 py-3 text-left leading-normal focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
-                    data-oid="2na0rv5"
-                  >
-                    <span className="flex-1 text-left text-muted-foreground" data-oid="-4kluuj">
-                      {state || "Select state..."}
-                    </span>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  </button>
-
-                  {openDropdown === "state" && (
-                    <div id="state-list" role="listbox" className="absolute z-50 mt-1 w-full rounded-lg border border-border bg-background shadow-lg">
-                      <div className="max-h-60 overflow-auto p-1">
-                        {Object.keys(stateDenialRates)
-                          .sort()
-                          .map((st) => (
-                            <button
-                              key={st}
-                              onClick={() => {
-                                setState(st);
-                                setOpenDropdown(null);
-                              }}
-                              role="option"
-                              aria-selected={state === st}
-                              tabIndex={0}
-                              onKeyDown={(e) => {
-                                if (e.key === "Enter" || e.key === " ") {
-                                  setState(st);
-                                  setOpenDropdown(null);
-                                }
-                              }}
-                              className="w-full px-3 py-3 text-left text-sm leading-relaxed hover:bg-muted/50 focus:bg-muted/50 focus:outline-none"
-                              data-oid="6ctt29o"
-                            >
-                              {st}
-                            </button>
-                          ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Results Section */}
-            <div className="mt-8 text-center" data-oid="9j:gelp">
-              {estimatedLoss !== -1 ? (
-                <div className="space-y-4" data-oid="avri4yb">
-                  <div
-                    className="mb-2 text-3xl font-bold text-red-600
-                               dark:text-red-400"
-                    data-oid="azg_42w"
-                  >
-                    {formatCurrency(estimatedLoss)}
-                  </div>
-                  <div
-                    className="mb-4 text-sm text-foreground"
-                    data-oid="px3g4b9"
-                  >
-                    Estimated annual revenue lost to claim denials
-                  </div>
-
-                  {/* Kyron Savings */}
-                  <div
-                    className="mb-4 rounded-lg border border-green-200
-                               bg-green-50 p-4 dark:border-green-800
-                               dark:bg-green-950/20"
-                    data-oid="cc2ybtm"
-                  >
-                    <div
-                      className="mb-2 text-2xl font-bold text-green-600
-                                 dark:text-green-400"
-                      data-oid="falww:0"
-                    >
-                      {formatCurrency(kyronSavings)}
-                    </div>
-                    <div
-                      className="text-sm text-green-700 dark:text-green-300"
-                      data-oid="71mtzmi"
-                    >
-                      Potential savings with Kyron Medical (75% recovery)
-                    </div>
-                  </div>
-
-                  <Card
-                    className="border-border bg-muted/30 dark:bg-muted/20"
-                    data-oid="hwcfn30"
-                  >
-                    <CardContent className="pt-4" data-oid="1hb3f6v">
-                      <div className="space-y-2 text-xs" data-oid="1-0apt9">
-                        <div
-                          className="flex justify-between"
-                          data-oid="1q1b30a"
-                        >
-                          <span
-                            className="text-muted-foreground"
-                            data-oid="s-p:a2a"
-                          >
-                            Annual Revenue:
-                          </span>
-                          <span
-                            className="font-medium text-foreground"
-                            data-oid="l:21auc"
-                          >
-                            {formatCurrency(parseFloat(annualRevenue))}
-                          </span>
-                        </div>
-                        <div
-                          className="flex justify-between"
-                          data-oid="_2f6ezu"
-                        >
-                          <span
-                            className="text-muted-foreground"
-                            data-oid="vxd1xr4"
-                          >
-                            Practice Size:
-                          </span>
-                          <span
-                            className="font-medium text-foreground"
-                            data-oid="pq889rh"
-                          >
-                            {practiceSize} providers
-                          </span>
-                        </div>
-                        <div
-                          className="flex justify-between"
-                          data-oid="tmh3dp1"
-                        >
-                          <span
-                            className="text-muted-foreground"
-                            data-oid="b27ntaz"
-                          >
-                            Billing Rate:
-                          </span>
-                          <span
-                            className="font-medium text-foreground"
-                            data-oid="u4usw24"
-                          >
-                            97%
-                          </span>
-                        </div>
-                        <div
-                          className="flex justify-between border-t border-border pt-2"
-                          data-oid="hyf-wxy"
-                        >
-                          <span
-                            className="text-muted-foreground"
-                            data-oid="n2e..gt"
-                          >
-                            Combined Denial Rate:
-                          </span>
-                          <span
-                            className="font-medium text-foreground"
-                            data-oid="tz2g4qz"
-                          >
-                            {typeof specialtyDenialRates[specialty] ===
-                              "number" &&
-                            typeof stateDenialRates[state] === "number"
-                              ? (
-                                  (specialtyDenialRates[specialty] +
-                                    stateDenialRates[state]) /
-                                  2
-                                ).toFixed(1)
-                              : typeof stateDenialRates[state] === "number"
-                                ? stateDenialRates[state].toFixed(1)
-                                : "N/A"}
-                            %
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Demo Request Section */}
-                  <div
-                    className="mt-6 rounded-lg border border-blue-500/20
-                               bg-blue-500/5 p-4 dark:border-blue-400/20
-                               dark:bg-blue-400/5"
-                    data-oid="ug4xb3u"
-                  >
-                    <h3
-                      className="mb-3 text-lg font-semibold text-blue-600
-                                 dark:text-blue-400"
-                      data-oid="mjuc0lg"
-                    >
-                      Get Started with Kyron Medical
-                    </h3>
-                    <div className="space-y-3" data-oid="w_cmrpf">
-                      <div
-                        className="flex flex-col gap-2 sm:flex-row"
-                        data-oid="-q.z_kp"
-                      >
-                        <Mail
-                          className="mt-1 h-4 w-4 text-blue-600
-                                     dark:text-blue-400 sm:mt-1"
-                          data-oid="2e37mcv"
-                        />
-
-                        <Input
-                          type="email"
-                          aria-label="Enter your email address"
-                          placeholder="Enter your email address"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="w-full flex-1"
-                          data-oid="9pudc5e"
-                        />
-                      </div>
-                      <div className="flex gap-2" data-oid="1zt8i86">
-                        <Button
-                          onClick={handleDemoRequest}
-                          aria-label="Request Demo"
-                          className="w-full flex-1 bg-blue-600 text-white
-                                     hover:bg-blue-700 dark:bg-blue-500
-                                     dark:hover:bg-blue-600"
-                          data-oid="wq1mzb:"
-                        >
-                          <Calendar
-                            className="mr-2 h-4 w-4"
-                            data-oid="_1t4fog"
-                          />
-                          Request Demo
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-4" data-oid="94hrv7n">
-                  <div
-                    className="mb-4 text-4xl text-blue-500"
-                    data-oid="rrtuh3w"
-                  >
-                    <Calculator
-                      className="mx-auto h-12 w-12"
-                      data-oid="0z18c8i"
-                    />
-                  </div>
-                  <div
-                    className="mb-2 text-lg font-semibold text-foreground"
-                    data-oid="4oepupe"
-                  >
-                    Complete the form to see your results
-                  </div>
-                  <div
-                    className="mx-auto max-w-md text-sm text-muted-foreground"
-                    data-oid="y928-0w"
-                  >
-                    Fill in your practice details to discover your revenue
-                    recovery potential
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Footer */}
-            <div
-              className="mt-6 text-center text-xs text-muted-foreground"
-              data-oid="3qp1srv"
-            >
-              *Estimates based on industry averages and may vary by practice.
-              Actual results depend on specific circumstances and claim types.
             </div>
           </div>
         </div>
+
+        <p className="mx-auto mt-6 max-w-3xl text-center text-xs text-muted-foreground">
+          *Estimates based on industry averages and may vary by practice.
+          Actual results depend on specific circumstances and claim types.
+        </p>
       </div>
     </section>
   );
