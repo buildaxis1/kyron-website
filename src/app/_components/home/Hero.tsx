@@ -74,20 +74,41 @@ const Hero: React.FC<Props> = () => {
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-md">
                 <span className="inline-flex items-center gap-1 text-primary">
                   <Bot className="h-3.5 w-3.5" />
-                  Agents
+                  Voice AI for healthcare operations
                 </span>
               </div>
 
               <h1 className="text-balance text-4xl font-bold leading-tight tracking-[-0.02em] text-foreground sm:text-5xl md:text-6xl">
-                Build denial automation
-                <br className="hidden sm:block" /> with AI.
+                AI that answers your phones
+                <br className="hidden sm:block" /> and works your claims.
               </h1>
 
               <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
-                Kyron’s healthcare‑grade agents triage denials, draft appeals,
-                and reconcile claims, so your team can spend more time with
-                patients, not paperwork.
+                Kyron’s healthcare‑grade AI answers patient calls, works payer
+                phone lines, and turns denials into recovered revenue — so your
+                team can spend more time with patients, not paperwork.
               </p>
+
+              <div className="mt-5 flex flex-wrap gap-2">
+                <a
+                  href="#ai-receptionist"
+                  className="rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-md transition-colors hover:border-primary/50 hover:text-primary"
+                >
+                  Medical AI Receptionist
+                </a>
+                <a
+                  href="#rcm-ai"
+                  className="rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-md transition-colors hover:border-primary/50 hover:text-primary"
+                >
+                  RCM Voice AI
+                </a>
+                <a
+                  href="#denial-intelligence"
+                  className="rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-md transition-colors hover:border-primary/50 hover:text-primary"
+                >
+                  Denial Intelligence
+                </a>
+              </div>
 
               <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:items-start">
                 <Link

@@ -191,7 +191,7 @@ const DashboardPreview = () => {
 
   return (
     <section
-      id="prototype"
+      id="denial-intelligence"
       className="relative overflow-hidden py-20 md:py-28"
       style={{
         background:
@@ -216,17 +216,18 @@ const DashboardPreview = () => {
           <div>
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/60 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur-md">
               <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-              Live Preview
+              Denial Intelligence
             </div>
 
             <h2 className="text-balance text-3xl font-bold tracking-[-0.02em] text-foreground sm:text-4xl md:text-5xl">
-              Operational clarity, less busywork.
+              Every denial explained, appealed, and recovered.
             </h2>
 
             <p className="mt-4 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-              Review encounters, switch workflows, and launch AI agents from a
-              single dashboard. Built for organizations and practices—fast,
-              precise, and auditable.
+              Denial Intelligence turns vague payer denials into structured,
+              actionable data. Voice AI calls payers to clarify denial reasons,
+              analytics surface the patterns behind them, and AI agents draft
+              appeals — all from one auditable dashboard.
             </p>
 
             <ul className="mt-6 grid grid-cols-1 gap-2 text-sm text-muted-foreground sm:grid-cols-2">
@@ -259,7 +260,7 @@ const DashboardPreview = () => {
                   })
                 }
               >
-                Request a demo
+                See Denial Intelligence live
                 <ArrowRight className="h-4 w-4" />
               </Link>
 
@@ -496,6 +497,25 @@ const DashboardPreview = () => {
             </motion.div>
           </div>
         </div>
+
+        {/* Demo video slot — recording to be embedded */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          className="mx-auto mt-16 max-w-4xl"
+        >
+          <div className="relative flex aspect-video items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-background/70 shadow-lg backdrop-blur">
+            <div className="flex flex-col items-center gap-3 text-muted-foreground">
+              <Sparkles className="h-12 w-12 text-violet-500/70" />
+              <p className="text-sm font-medium">
+                Product demo — insurance calling workflow, voice AI, Denial
+                Intelligence dashboard &amp; analytics
+              </p>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   );
